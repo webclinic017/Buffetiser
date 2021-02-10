@@ -30,22 +30,22 @@ class Model:
 
     def calculatePortfolioTotals(self):
 
-        # Calculate the total sum of all shares for the last year
+        # Calculate the total sum of all shares for each day for the last year
         portfolioSum = []
-        for day in range(0, len(self.portfolio)):
+        for day in range(0, 255):
             daySum = 0
             for stock in self.portfolio:
-                daySum += stock.prices['close'][day] * stock.held
+                try:
+                    daySum += stock.prices['close'][day] * stock.held
+                except IndexError:
+                    pass  # It doesn't matter
             portfolioSum.append(daySum)
 
         return portfolioSum
 
-
-
-
-
     def totalsStock(self, text):
         print('stocks {}'.format(text))
+
 
 
 

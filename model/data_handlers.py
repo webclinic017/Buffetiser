@@ -10,7 +10,7 @@ class Stock:
         self.held = int(held)
         self.cost = float(cost)
         self.prices = prices
-        self.currentPrice = -1
+        self.livePrice = -1
 
 
 def getTickerData(code):
@@ -43,15 +43,6 @@ def getTickerData(code):
                 prices['close'].append(entry['close'])
 
     return prices
-
-
-def getCurrentPrice(stock):
-    pass
-
-
-def updatePortfolio():
-    pass
-
 
 
 
