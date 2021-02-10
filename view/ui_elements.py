@@ -18,8 +18,3 @@ def buffButton(text, height, toggle, offColour, onColour, function):
                                        color: white;}""")
     return genericButton
 
-
-
-
-
-

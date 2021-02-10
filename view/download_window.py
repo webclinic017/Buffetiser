@@ -1,3 +1,4 @@
+import json
 import threading
 from datetime import datetime
 
@@ -51,14 +52,15 @@ class DownloadThread(threading.Thread):
                   '&fmt=json'
             response = requests.get(url=url).json()
             stock.currentPrice = response['close']
-            print('{} {}'.format(stock.code, stock.currentPrice))
+
             self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100)
             self.downloadingWindow.setLabelText(stock.code)
             getTickerData(stock.code)
 
             if count == numberOfStocks - 1:
+                print('downloadingFinished')
                 self.downloadingFinished.sig.emit()
-                self.downloadingWindow.close()
+                self.downloadingWindow.hide()
 
 
 class DownloadWindow(QProgressDialog):
