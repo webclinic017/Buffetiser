@@ -1,5 +1,6 @@
 import json
 import threading
+import os
 from datetime import datetime
 
 import requests
@@ -7,6 +8,9 @@ from PySide2.QtCore import QObject, Signal, Qt
 from PySide2.QtWidgets import QProgressDialog
 
 from model.data_structures import InvestmentType
+
+
+DATA_PATH = 'data'
 
 
 class DownloadSignal(QObject):
@@ -29,6 +33,16 @@ class DownloadThread(threading.Thread):
         if self.symbol:
             self.portfolio = [stock.code for stock in self.portfolio if stock.code == self.symbol]
 
+        try:
+            os.mkdir(DATA_PATH)
+        except FileExistsError as error:
+            if os.path.isdir(DATA_PATH):
+                pass
+            else:
+                print('Unexpected FileExistsError while creating data directory:',error)
+        except OSError as error:
+            print('Unexpected OSError while creating data directory:',error)
+
         numberOfStocks = len(self.portfolio)
         for count, investment in enumerate(self.portfolio):
             # Update historical share data
@@ -43,7 +57,7 @@ class DownloadThread(threading.Thread):
                       '&to=' + str(today.year) + '-' + str(today.month) + '-' + today.strftime("%d") + \
                       '&g=m'
                 response = requests.get(url=url).json()
-                with open('data/data-{}.txt'.format(investment.code), 'w') as outfile:
+                with open(os.path.join(DATA_PATH,f'data-{investment.code}.txt'), 'w') as outfile:
                     json.dump(response, outfile)
 
                 # Update current priceHistory
@@ -67,7 +81,7 @@ class DownloadThread(threading.Thread):
                       '&order=m' + \
                       '&fmt=json'
                 response = requests.get(url=url).json()
-                with open('data/data-{}.txt'.format(investment.code), 'w') as outfile:
+                with open(os.path.join(DATA_PATH,f'data-{investment.code}.txt'), 'w') as outfile:
                     json.dump(response, outfile)
 
                 # Update current priceHistory
