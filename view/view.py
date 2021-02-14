@@ -2,16 +2,13 @@ import os
 import tempfile
 
 import pygal
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QPixmap
+from PySide2.QtCore import Qt, QUrl
+from PySide2.QtGui import QPixmap, QDesktopServices
 from PySide2.QtWidgets import QGridLayout, QLabel, QVBoxLayout
 
 from view.config_dialog import ConfigDialog
 from view.main_window import MainWindow
-from view.share_panel import SharePanel
-
-
-
+from view.investment_panel import investmentPanel
 
 
 class View:
@@ -21,7 +18,7 @@ class View:
         self.portfolio = fatController.model.portfolio
         self.row = 0
         self.mainWindow = None
-        self.allSharePanels = {}
+        self.allInvestmentPanels = {}
 
         self.topLayout = QGridLayout()
         self.bottomLayout = QGridLayout()
@@ -32,10 +29,11 @@ class View:
         self.mainWindow = MainWindow(self.fatController)
         self.mainWindow.show()
 
-    def updateView(self):
-        print('update SharePanels')
-        for share in self.portfolio:
-            self.allSharePanels[share.code].updateLivePrice(share.livePrice)
+    def updateLivePrice(self, stock):
+        self.allInvestmentPanels[stock.code].updateLivePrice(stock)
+
+    def help(self, _):
+        QDesktopServices.openUrl(QUrl.fromLocalFile('/Users/mullsy/workspace/Buffetiser/media/help.html'))
 
     def config(self, _):
         config = ConfigDialog(self.fatController)
@@ -43,8 +41,8 @@ class View:
 
     def createPanel(self, stock):
 
-        panel = SharePanel(stock)
-        self.allSharePanels[stock.code] = panel
+        panel = investmentPanel(stock)
+        self.allInvestmentPanels[stock.code] = panel
         self.topLayout.addWidget(panel, self.row, 0)
 
         spacer = QLabel('')
@@ -77,9 +75,15 @@ class View:
 
         totalCost = 0
         totalValue = 0
+        percentProfitSum = 0
+        totalPercentProfit = 0
         for stock in self.portfolio:
-            totalCost += stock.held * stock.cost
-            totalValue += stock.held * float(stock.prices['close'][-1])
+            totalCost += stock.totalCost()
+            totalValue += stock.totalValue()
+            percentProfitSum += (stock.percentProfit() - 1) * 100
+
+        if len(self.portfolio) > 0:
+            totalPercentProfit = (percentProfitSum / len(self.portfolio))
 
         label = QLabel('Cost:')
         label.setFixedWidth(100)
@@ -127,7 +131,7 @@ class View:
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; border-left: 1px solid #DDD; border-bottom: 1px solid #DDD;} """)
         self.bottomLayout.addWidget(label, 3, 1)
-        label = QLabel('{:.2f}%'.format(((totalValue - totalCost) / totalCost) * 100))
+        label = QLabel('{:.2f}%'.format(totalPercentProfit))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 25px; border-left: 1px solid #DDD; border-bottom: 1px solid #DDD;} """)

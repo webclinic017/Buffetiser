@@ -3,14 +3,14 @@ import threading
 from datetime import datetime
 
 import requests
-from PySide2.QtCore import QObject, Signal
+from PySide2.QtCore import QObject, Signal, Qt
 from PySide2.QtWidgets import QProgressDialog
 
-from model.data_handlers import getTickerData
+from model.data_structures import InvestmentType
 
 
 class DownloadSignal(QObject):
-    sig = Signal()
+    sig = Signal(object)
 
 
 class DownloadThread(threading.Thread):
@@ -30,48 +30,70 @@ class DownloadThread(threading.Thread):
             self.portfolio = [stock.code for stock in self.portfolio if stock.code == self.symbol]
 
         numberOfStocks = len(self.portfolio)
-        for count, stock in enumerate(self.portfolio):
-            # Update historical data
-            url = 'https://eodhistoricaldata.com/api/eod/' + \
-                  stock.code + \
-                  '.AU?api_token=' + \
-                  self.fatController.key + \
-                  '&fmt=json' + \
-                  '&from=' + str(today.year-1) + '-' + str(today.month) + '-' + today.strftime("%d") + \
-                  '&to=' + str(today.year) + '-' + str(today.month) + '-' + today.strftime("%d") + \
-                  '&g=m'
-            response = requests.get(url=url).json()
-            with open('data/data-{}.txt'.format(stock.code), 'w') as outfile:
-                json.dump(response, outfile)
+        for count, investment in enumerate(self.portfolio):
+            # Update historical share data
+            if investment.investmentType == InvestmentType.Share:
+                pass
+                url = 'https://eodhistoricaldata.com/api/eod/' + \
+                      investment.code + \
+                      '.AU?api_token=' + \
+                      self.fatController.key + \
+                      '&fmt=json' + \
+                      '&from=' + str(today.year-1) + '-' + str(today.month) + '-' + today.strftime("%d") + \
+                      '&to=' + str(today.year) + '-' + str(today.month) + '-' + today.strftime("%d") + \
+                      '&g=m'
+                response = requests.get(url=url).json()
+                with open('data/data-{}.txt'.format(investment.code), 'w') as outfile:
+                    json.dump(response, outfile)
 
-            # Update current prices
-            url = 'https://eodhistoricaldata.com/api/real-time/' + \
-                  stock.code + \
-                  '.AU?api_token=' + \
-                  self.fatController.key + \
-                  '&fmt=json'
-            response = requests.get(url=url).json()
-            stock.currentPrice = response['close']
+                # Update current priceHistory
+                url = 'https://eodhistoricaldata.com/api/real-time/' + \
+                      investment.code + \
+                      '.AU?api_token=' + \
+                      self.fatController.key + \
+                      '&fmt=json'
+                response = requests.get(url=url).json()
+                investment.livePrice = response['close']
+                self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100)
+                self.downloadingWindow.setLabelText(investment.code)
+                self.downloadingFinished.sig.emit(investment)
 
-            self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100)
-            self.downloadingWindow.setLabelText(stock.code)
-            getTickerData(stock.code)
+            elif investment.investmentType == InvestmentType.Crypto:
+                # Update historical crypto data
+                url = 'https://eodhistoricaldata.com/api/eod/' + \
+                      investment.code + \
+                      '-USD.CC?api_token=' + \
+                      self.fatController.key + \
+                      '&order=m' + \
+                      '&fmt=json'
+                response = requests.get(url=url).json()
+                with open('data/data-{}.txt'.format(investment.code), 'w') as outfile:
+                    json.dump(response, outfile)
 
-            if count == numberOfStocks - 1:
-                print('downloadingFinished')
-                self.downloadingFinished.sig.emit()
-                self.downloadingWindow.hide()
+                # Update current priceHistory
+                url = 'https://eodhistoricaldata.com/api/real-time/' + \
+                      investment.code + \
+                      '-USD.CC?api_token=' + \
+                      self.fatController.key + \
+                      '&fmt=json'
+                response = requests.get(url=url).json()
+                price = response['close']
+                if price == 'NA':
+                    price = investment.priceHistory['close'][-1]
+
+                conversion = float(
+                    requests.get(url='https://www.freeforexapi.com/api/live?pairs=USDAUD').json()['rates']['USDAUD'][
+                        'rate'])
+                investment.livePrice = float(price) * float(conversion)  # in AUD
 
 
 class DownloadWindow(QProgressDialog):
     def __init__(self, parent=None):
         QProgressDialog.__init__(self, parent)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
         self.setGeometry(300, 300, 300, 50)
 
     def setProgress(self, value):
-        if value > 100:
+        if value >= 100:
             value = 100
         self.setValue(value)
-
-
-

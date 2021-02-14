@@ -1,13 +1,15 @@
 import os
 
-from PySide2.QtWidgets import QGridLayout, QLabel, QLineEdit, QPushButton, QDialogButtonBox, QSizePolicy, QSpacerItem, \
-    QDialog
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QGridLayout, QLabel, QDialogButtonBox, QSizePolicy, QSpacerItem, \
+    QDialog, QScrollArea, QWidget
 
 
 class ConfigDialog(QDialog):
 
     def __init__(self, parent=None):
         super(ConfigDialog, self).__init__(parent)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
         self.setFixedSize(500, 350)
         self.setStyleSheet("""QDialog{background-color: white;} """)
 
@@ -15,52 +17,53 @@ class ConfigDialog(QDialog):
 
         configPath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config.csv'))
         configValues = open(configPath, 'r').read().split('\n')
-        linkLabel = QLabel('''Get a fully functional and free API Key from 
-                              <a href='https://eodhistoricaldata.com'>EOD Historical Data</a>''')
-        linkLabel.setOpenExternalLinks(True)
-        layout.addWidget(linkLabel, 0, 0, 1, 6)
-        apiKey = QLineEdit(configValues[0])
-        layout.addWidget(apiKey, 1, 1, 1, 4)
+        dataIconLabel = QLabel()
+        dataIconLabel.setStyleSheet('''QLabel { background-image: '/Users/mullsy/workspace/Buffetiser/media'} ''''')
+        dataLabel = QLabel('''Get a fully functional and free API Key from ''' +
+                           '''<a href='https://eodhistoricaldata.com'>EOD Historical Data</a>''')
+        dataLabel.setOpenExternalLinks(True)
 
-        layout.addWidget(QLabel('Add new stock:'), 2, 0, 1, 1)
-        codeText = QLineEdit('Code')
-        layout.addWidget(codeText, 2, 1, 1, 1)
-        nameText = QLineEdit('Name')
-        layout.addWidget(nameText, 2, 2, 1, 1)
-        heldText = QLineEdit('Held')
-        layout.addWidget(heldText, 2, 3, 1, 1)
-        costText = QLineEdit('Cost')
-        layout.addWidget(costText, 2, 4, 1, 1)
-        addButton = QPushButton('Add')
-        layout.addWidget(addButton, 2, 5, 1, 1)
+        layout.addWidget(dataIconLabel, 0, 0, 1, 6)
+        layout.addWidget(dataLabel, 0, 0, 1, 6)
+
+        currencyConverterLabel = QLabel('''Currency Conversion by <a href='https://www.freeforexapi.com'>Forex</a>''')
+        currencyConverterLabel.setOpenExternalLinks(True)
+        layout.addWidget(currencyConverterLabel, 1, 0, 1, 6)
+
+        layout.addWidget(QLabel('To add a new investment, edit the config.csv file.'), 2, 0, 1, 6)
+
+        investmentsHeldWidget = QWidget()
+        investmentsHeldLayout = QGridLayout()
+        investmentsHeldScroll = QScrollArea()
+        investmentsHeldWidget.setLayout(investmentsHeldLayout)
+        investmentsHeldScroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        investmentsHeldScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        investmentsHeldScroll.setWidgetResizable(True)
+        investmentsHeldScroll.setWidget(investmentsHeldWidget)
 
         htmlText = '<html><table width="100%"><tr><th>Code</th><th>Name</th><th>Held</th><th>Cost</th><tr></tr>'
         for line in configValues[1:-1]:
             cells = line.split(',')
-            htmlText += '<tr><td>' + cells[0] + \
-                        '</td><td>' + cells[1] + \
+            htmlText += '<tr><td>' + cells[1] + \
                         '</td><td>' + cells[2] + \
-                        '</td><td>' + cells[3] + '</td></tr>'
+                        '</td><td>' + cells[3] + \
+                        '</td><td>' + cells[4] + '</td></tr>'
         htmlText += '</table></html>'
         htmlLabel = QLabel(htmlText)
         htmlLabel.setStyleSheet("""QLabel{border: 1px solid black;}""")
-        layout.addWidget(htmlLabel, 3, 0, 1, 6)
+        investmentsHeldLayout.addWidget(htmlLabel, 3, 0, 1, 6)
+
+        layout.addWidget(investmentsHeldWidget, 3, 0, 1, 6)
 
         buttonBox = QDialogButtonBox(self)
         buttonBox.addButton("OK", QDialogButtonBox.AcceptRole)
-        buttonBox.addButton("Cancel", QDialogButtonBox.RejectRole)
-        buttonBox.accepted.connect(self.writeConfig)
+        buttonBox.accepted.connect(self.closeDialog)
         buttonBox.rejected.connect(self.closeDialog)
         layout.addWidget(buttonBox, 4, 3, 1, 3)
 
         layout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 5, 0)
 
         self.setLayout(layout)
-
-    def writeConfig(self):
-        file = open('config.txt', 'w')
-        file.close()
-        self.hide()
 
     def closeDialog(self):
         self.hide()
