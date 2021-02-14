@@ -1,0 +1,5 @@
+key,<insert API key from https://eodhistoricaldata.com>
+share,VAS,Australian Shares,50,60.123
+share,VDHG,Diversified High-growth Australian,100,50.456
+share,VGS,International Shares,150,70.789
+share,VTS,US Total Market Shares,25,200.246
