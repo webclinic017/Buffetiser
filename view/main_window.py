@@ -1,6 +1,6 @@
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QMainWindow, QGridLayout, QDesktopWidget, QScrollArea, QWidget, QSpacerItem, \
-    QSizePolicy
+    QSizePolicy, QPushButton
 
 from view.ui_elements import buffButton
 
@@ -47,18 +47,17 @@ class MainWindow(QMainWindow):
 
         self.view.sideLayout.setContentsMargins(0, 0, 0, 0)
         self.view.sideLayout.setSpacing(5)
+        self.view.sideLayout.addWidget(buffButton('Help', 50, False, 'white', '#DDD', self.fatController.view.help))
         self.view.sideLayout.addWidget(buffButton('Config', 50, False, 'white', '#DDD', self.fatController.view.config))
-        self.view.sideLayout.addWidget(buffButton('Live', 50, False, 'white', '#DDD', self.fatController.model.readAllLive))
+        self.view.sideLayout.addWidget(buffButton('Live',
+                                                  50,
+                                                  False,
+                                                  'white',
+                                                  '#DDD',
+                                                  self.fatController.model.readAllLive))
         self.view.sideLayout.addWidget(buffButton('Quit', 50, False, 'white', '#DDD', self.fatController.quitApp))
         verticalSpacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.view.sideLayout.addItem(verticalSpacer)
-        for stock in self.portfolio:
-            self.view.sideLayout.addWidget(buffButton(stock.code,
-                                                      20,
-                                                      True,
-                                                      'rgb(0, 144, 23)',
-                                                      '#DDD',
-                                                      self.fatController.model.totalsStock))
 
         sideWidget = QWidget()
         sideWidget.setFixedSize(50, 980)

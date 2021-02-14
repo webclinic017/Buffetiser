@@ -6,7 +6,7 @@ from view.view import View
 
 class FatController(QWidget):
 
-    def __init__(self, parent=None):
+    def __init__(self):
         super(FatController, self).__init__()
 
         self.key = 0

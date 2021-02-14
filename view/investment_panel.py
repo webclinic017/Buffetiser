@@ -7,17 +7,17 @@ from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGridLayout, QLabel
 
 
-class SharePanel(QWidget):
+class investmentPanel(QWidget):
     def __init__(self, stock):
-        super(SharePanel, self).__init__()
+        super(investmentPanel, self).__init__()
 
         self.stock = stock
         self.livePriceLabel = QLabel()
         self.createPanel(stock)
 
-    def updateLivePrice(self, price):
-        print('update {} to {}'.format(self.stock.code, price))
-        self.livePriceLabel.setText('${:.2f}'.format(price))
+    def updateLivePrice(self, stock):
+        if stock.code == self.stock.code:
+            self.livePriceLabel.setText('${}'.format(stock.livePrice))
 
     def createPanel(self, stock):
 
@@ -31,7 +31,7 @@ class SharePanel(QWidget):
         detailsLayout.addWidget(self.plotPriceHistory(), 0, 0, 7, 1)
 
         costPrice = stock.held * stock.cost
-        currentPrice = float(stock.prices['close'][-1])
+        currentPrice = float(stock.priceHistory['close'][-1])
         currentValue = stock.held * currentPrice
 
         label = QLabel('Cost Price:')
@@ -123,24 +123,27 @@ class SharePanel(QWidget):
                         border-left: 1px solid #DDD; 
                         border-bottom: 1px solid #DDD;} """)
         detailsLayout.addWidget(label, 5, 1)
-        profit = currentValue - costPrice
-        label = QLabel('${:.2f}'.format(profit))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        if profit > 0:
-            label.setStyleSheet(
+        profitLabel = QLabel()
+        if stock.profit() > 0:
+            profitLabel.setStyleSheet(
                 """QWidget{ color: green; 
                             padding-right: 10px; 
                             border-left: 1px solid #DDD; 
                             border-bottom: 1px solid #DDD; 
                             border-right: 1px solid #DDD;} """)
+            profitTextFormat = '${:.2f}'
         else:
-            label.setStyleSheet(
+            profitLabel.setStyleSheet(
                 """QWidget{ color: red; 
                             padding-right: 10px; 
                             border-left: 1px solid #DDD; 
                             border-bottom: 1px solid #DDD; 
                             border-right: 1px solid #DDD;} """)
-        detailsLayout.addWidget(label, 5, 2)
+            profitTextFormat = '-${:.2f}'
+        profitLabel.setText(profitTextFormat.format(abs(stock.profit())))
+        profitLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        detailsLayout.addWidget(profitLabel, 5, 2)
 
         label = QLabel('')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
@@ -175,13 +178,13 @@ class SharePanel(QWidget):
                                show_minor_x_labels=False)
         stockPlot.title = '{} ({})'.format(self.stock.name, self.stock.code)
 
-        dateList = [x for x in self.stock.prices['date']]
+        dateList = [x for x in self.stock.priceHistory['date']]
         stockPlot.x_labels = dateList
         stockPlot.x_labels_major = dateList[::48]
 
-        stockPlot.add('Low', self.stock.prices['low'])
-        stockPlot.add('High', self.stock.prices['high'])
-        stockPlot.add('Close', self.stock.prices['close'])
+        stockPlot.add('Low', self.stock.priceHistory['low'])
+        stockPlot.add('High', self.stock.priceHistory['high'])
+        stockPlot.add('Close', self.stock.priceHistory['close'])
         plotWidget = QLabel()
         path = os.path.join(tempfile.gettempdir(), 'buffetiser.png')
         stockPlot.render_to_png(path)
