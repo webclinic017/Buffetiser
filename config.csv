@@ -1,13 +1,17 @@
-key,5effbcef9653e8.32280392,,,
-share,VAS,Australian Shares,72,75.642
-share,VDHG,Diversified High-growth Australian,102,48.523
-share,VGS,International Shares,66,71.266
-share,VTS,US Total Market Shares,23,209.476
-share,MP1,Megaport,680,10.494
-share,CAT,Catapult,1379,1.479
-share,ACDC,Battery Tech & Lithium,58,68.142
-share,ESPO,Vaneck Vectors Video Gaming And Esports,102,10.648
-share,FMG,Fortescue Metals Group Ltd,80,24.888
-share,LIT,Lithium Australia Nl,15904,0.123
-share,LVT,Livetiles Limited,1657,0.307
-share,ABB,Aussie Broadband,2000,1
+key,5effbcef9653e8.32280392,,,,
+Investment Type,Symbol,Name,Amount Held,Cost/Item,Average Cost /All
+share,VAS,Australian Shares,72,75.64,
+share,VDHG,Diversified High-growth Australian,102,48.52,
+share,VGS,International Shares,66,71.27,
+share,VTS,US Total Market Shares,23,209.48,
+share,MP1,Megaport,680,10.49,
+share,CAT,Catapult,1379,1.48,
+share,ACDC,Battery Tech & Lithium,58,68.14,
+share,ESPO,Vaneck Vectors Video Gaming And Esports,102,10.65,
+share,FMG,Fortescue Metals Group Ltd,80,24.89,
+share,LIT,Lithium Australia Nl,15904,0.12,
+share,LVT,Livetiles Limited,1657,0.31,
+share,ABB,Aussie Broadband,2000,1.00,
+crypto,BTC,Bit Coin,0.01361185,60699.53,689.86
+crypto,ETH,Etherium,0.489366908,2331.34,1261.91
+crypto,XRP,XRP,100.2105572,0.69,70.22

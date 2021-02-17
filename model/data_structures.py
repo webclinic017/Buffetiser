@@ -9,26 +9,27 @@ class InvestmentType(enum.Enum):
 
 
 class Investment:
-    def __init__(self, investmentType, code, name, cost):
+    def __init__(self, investmentType, conversion, code, name, cost):
         self.investmentType = investmentType
         self.code = str(code)
         self.name = str(name)
         self.cost = float(cost)
         self.held = 0
+        self.livePrice = -1
+        self.conversion = conversion
         self.priceHistory = {}
         self.getTickerData(code)
-        self.livePrice = -1
 
         self.setDefaultLivePrice()
 
     def setDefaultLivePrice(self):
-        self.livePrice = self.priceHistory['close'][-1]
+        self.livePrice = self.priceHistory['close'][-1] * self.conversion
 
     def totalCost(self):
-        return self.held * self.cost
+        return self.held * self.cost * self.conversion
 
     def totalValue(self):
-        return self.held * self.livePrice
+        return self.held * self.livePrice * self.conversion
 
     def profit(self):
         return self.totalValue() - self.totalCost()
@@ -60,32 +61,39 @@ class Investment:
                     continue
                 else:
                     prices['date'].append(entry['date'])
-                    prices['high'].append(entry['high'])
-                    prices['low'].append(entry['low'])
-                    prices['close'].append(entry['close'])
+                    prices['high'].append(entry['high'] * self.conversion)
+                    prices['low'].append(entry['low'] * self.conversion)
+                    prices['close'].append(entry['close'] * self.conversion)
 
         self.priceHistory = prices
 
 
 class Share(Investment):
-    def __init__(self, investmentType, code, name, held, cost):
-        super().__init__(investmentType, code, name, cost)
+    def __init__(self, investmentType, conversion, code, name, held, cost):
+        super().__init__(investmentType, conversion, code, name, cost)
         self.held = int(held)
 
 
 class Crypto(Investment):
-    def __init__(self, investmentType, code, name, held, cost):
-        super().__init__(investmentType, code, name, cost)
+    def __init__(self, investmentType, conversion, code, name, held, cost):
+        super().__init__(investmentType, conversion, code, name, cost)
         self.held = float(held)
 
-    def totalCost(self):
-        return self.held * self.cost
-
-    def totalValue(self):
-        return self.held * self.livePrice
-
-    def percentProfit(self):
-        return self.totalValue() / self.totalCost()
-
-
+    # def totalCost(self):
+    #     return self.held * self.cost * self.conversion
+    #
+    # def totalValue(self):
+    #     return self.held * self.livePrice
+    #
+    # def percentProfit(self):
+    #     return self.totalValue() / self.totalCost()
+    #
+    # @property
+    # def some_value(self):
+    #     return self._actual
+    #
+    # @some_value.setter
+    # def some_value(self, value):
+    #     print ("some_value changed to", value)
+    #     self._actual = value
 

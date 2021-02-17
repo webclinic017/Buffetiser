@@ -10,6 +10,7 @@ class FatController(QWidget):
         super(FatController, self).__init__()
 
         self.key = 0
+        self.usdToAudConversion = 1
 
         self.model = Model(self)
         self.view = View(self)

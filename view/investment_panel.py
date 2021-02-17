@@ -6,20 +6,22 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGridLayout, QLabel
 
+from model.data_structures import InvestmentType
+
 
 class investmentPanel(QWidget):
-    def __init__(self, stock):
+    def __init__(self, investment):
         super(investmentPanel, self).__init__()
 
-        self.stock = stock
+        self.investment = investment
         self.livePriceLabel = QLabel()
-        self.createPanel(stock)
+        self.createPanel(investment)
 
-    def updateLivePrice(self, stock):
-        if stock.code == self.stock.code:
-            self.livePriceLabel.setText('${}'.format(stock.livePrice))
+    def updateLivePrice(self, investment):
+        if self.investment.code == self.investment.code:
+            self.livePriceLabel.setText('${:.2f}'.format(investment.livePrice))
 
-    def createPanel(self, stock):
+    def createPanel(self, investment):
 
         self.setFixedWidth(1200)
         self.setStyleSheet("""QWidget{ background-color: white;} """)
@@ -30,16 +32,16 @@ class investmentPanel(QWidget):
 
         detailsLayout.addWidget(self.plotPriceHistory(), 0, 0, 7, 1)
 
-        costPrice = stock.held * stock.cost
-        currentPrice = float(stock.priceHistory['close'][-1])
-        currentValue = stock.held * currentPrice
+        costPrice = investment.held * investment.cost
+        currentPrice = float(investment.livePrice) if float(investment.livePrice) > 0 else float(investment.priceHistory['close'][-1])
+        currentValue = investment.held * currentPrice
 
         label = QLabel('Cost Price:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; border-left: 1px solid #DDD; border-bottom: 1px solid #DDD;} """)
         detailsLayout.addWidget(label, 0, 1)
-        label = QLabel('${:.2f}'.format(stock.cost))
+        label = QLabel('${:.2f}'.format(investment.cost))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
@@ -55,7 +57,7 @@ class investmentPanel(QWidget):
                         border-left: 1px solid #DDD; 
                         border-bottom: 1px solid #DDD;} """)
         detailsLayout.addWidget(label, 1, 1)
-        label = QLabel('{}'.format(stock.held))
+        label = QLabel('{:.4f}'.format(investment.held))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
@@ -85,7 +87,7 @@ class investmentPanel(QWidget):
                         border-left: 1px solid #DDD; 
                         border-bottom: 1px solid #DDD;} """)
         detailsLayout.addWidget(label, 3, 1)
-        self.livePriceLabel.setText('${:.2f}'.format(stock.livePrice))
+        self.livePriceLabel.setText('${:.2f}'.format(investment.livePrice))
         self.livePriceLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.livePriceLabel.setStyleSheet(
             """QWidget{ padding-right: 10px; 
@@ -125,7 +127,7 @@ class investmentPanel(QWidget):
         detailsLayout.addWidget(label, 5, 1)
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         profitLabel = QLabel()
-        if stock.profit() > 0:
+        if investment.profit() > 0:
             profitLabel.setStyleSheet(
                 """QWidget{ color: green; 
                             padding-right: 10px; 
@@ -141,7 +143,7 @@ class investmentPanel(QWidget):
                             border-bottom: 1px solid #DDD; 
                             border-right: 1px solid #DDD;} """)
             profitTextFormat = '-${:.2f}'
-        profitLabel.setText(profitTextFormat.format(abs(stock.profit())))
+        profitLabel.setText(profitTextFormat.format(abs(investment.profit())))
         profitLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         detailsLayout.addWidget(profitLabel, 5, 2)
 
@@ -150,7 +152,7 @@ class investmentPanel(QWidget):
         label.setStyleSheet("""QWidget{ padding-right: 10px; 
                                         border-left: 1px solid #DDD;} """)
         detailsLayout.addWidget(label, 6, 1)
-        percentProfit = ((currentPrice - stock.cost) / stock.cost) * 100
+        percentProfit = ((currentPrice - investment.cost) / investment.cost) * 100
         label = QLabel('{:.2f}%'.format(percentProfit))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         if percentProfit > 0:
@@ -168,26 +170,25 @@ class investmentPanel(QWidget):
         detailsLayout.addWidget(label, 6, 2)
 
     def plotPriceHistory(self):
-        stockPlot = pygal.Line(width=1000,
-                               height=300,
-                               show_dots=False,
-                               show_y_guides=False,
-                               max_scale=6,
-                               legend_box_size=5,
-                               x_label_rotation=6.25,
-                               show_minor_x_labels=False)
-        stockPlot.title = '{} ({})'.format(self.stock.name, self.stock.code)
+        investmentPlot = pygal.Line(width=1000,
+                                    height=300,
+                                    show_dots=False,
+                                    show_y_guides=False,
+                                    max_scale=6,
+                                    legend_box_size=5,
+                                    x_label_rotation=6.25,
+                                    show_minor_x_labels=False)
+        investmentPlot.title = '{} ({})'.format(self.investment.name, self.investment.code)
 
-        dateList = [x for x in self.stock.priceHistory['date']]
-        stockPlot.x_labels = dateList
-        stockPlot.x_labels_major = dateList[::48]
-
-        stockPlot.add('Low', self.stock.priceHistory['low'])
-        stockPlot.add('High', self.stock.priceHistory['high'])
-        stockPlot.add('Close', self.stock.priceHistory['close'])
+        dateList = [x for x in self.investment.priceHistory['date']]
+        investmentPlot.x_labels = dateList
+        investmentPlot.x_labels_major = dateList[::48]
+        investmentPlot.add('Low', self.investment.priceHistory['low'])
+        investmentPlot.add('High', self.investment.priceHistory['high'])
+        investmentPlot.add('Close', self.investment.priceHistory['close'])
         plotWidget = QLabel()
         path = os.path.join(tempfile.gettempdir(), 'buffetiser.png')
-        stockPlot.render_to_png(path)
+        investmentPlot.render_to_png(path)
         plotWidget.setPixmap(QPixmap(path))
         os.remove(path)
 

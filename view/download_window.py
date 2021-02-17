@@ -9,7 +9,6 @@ from PySide2.QtWidgets import QProgressDialog
 
 from model.data_structures import InvestmentType
 
-
 DATA_PATH = 'data'
 
 
@@ -39,13 +38,14 @@ class DownloadThread(threading.Thread):
             if os.path.isdir(DATA_PATH):
                 pass
             else:
-                print('Unexpected FileExistsError while creating data directory:',error)
+                print('Unexpected FileExistsError while creating data directory:', error)
         except OSError as error:
-            print('Unexpected OSError while creating data directory:',error)
+            print('Unexpected OSError while creating data directory:', error)
 
         numberOfStocks = len(self.portfolio)
         for count, investment in enumerate(self.portfolio):
             # Update historical share data
+            self.downloadingWindow.setLabelText(investment.code)
             if investment.investmentType == InvestmentType.Share:
                 pass
                 url = 'https://eodhistoricaldata.com/api/eod/' + \
@@ -53,11 +53,11 @@ class DownloadThread(threading.Thread):
                       '.AU?api_token=' + \
                       self.fatController.key + \
                       '&fmt=json' + \
-                      '&from=' + str(today.year-1) + '-' + str(today.month) + '-' + today.strftime("%d") + \
+                      '&from=' + str(today.year - 1) + '-' + str(today.month) + '-' + today.strftime("%d") + \
                       '&to=' + str(today.year) + '-' + str(today.month) + '-' + today.strftime("%d") + \
                       '&g=m'
                 response = requests.get(url=url).json()
-                with open(os.path.join(DATA_PATH,f'data-{investment.code}.txt'), 'w') as outfile:
+                with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
                     json.dump(response, outfile)
 
                 # Update current priceHistory
@@ -67,10 +67,7 @@ class DownloadThread(threading.Thread):
                       self.fatController.key + \
                       '&fmt=json'
                 response = requests.get(url=url).json()
-                investment.livePrice = response['close']
-                self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100)
-                self.downloadingWindow.setLabelText(investment.code)
-                self.downloadingFinished.sig.emit(investment)
+                investment.livePrice = float(response['close'])
 
             elif investment.investmentType == InvestmentType.Crypto:
                 # Update historical crypto data
@@ -79,9 +76,12 @@ class DownloadThread(threading.Thread):
                       '-USD.CC?api_token=' + \
                       self.fatController.key + \
                       '&order=m' + \
-                      '&fmt=json'
+                      '&fmt=json' + \
+                      '&from=' + str(today.year - 1) + '-' + str(today.month) + '-' + today.strftime("%d") + \
+                      '&to=' + str(today.year) + '-' + str(today.month) + '-' + today.strftime("%d") + \
+                      '&g=m'
                 response = requests.get(url=url).json()
-                with open(os.path.join(DATA_PATH,f'data-{investment.code}.txt'), 'w') as outfile:
+                with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
                     json.dump(response, outfile)
 
                 # Update current priceHistory
@@ -91,14 +91,17 @@ class DownloadThread(threading.Thread):
                       self.fatController.key + \
                       '&fmt=json'
                 response = requests.get(url=url).json()
-                price = response['close']
-                if price == 'NA':
-                    price = investment.priceHistory['close'][-1]
 
-                conversion = float(
-                    requests.get(url='https://www.freeforexapi.com/api/live?pairs=USDAUD').json()['rates']['USDAUD'][
-                        'rate'])
-                investment.livePrice = float(price) * float(conversion)  # in AUD
+                self.fatController.usdToAudConversion = float(
+                    requests.get(url='https://www.freeforexapi.com/api/live?pairs=USDAUD')
+                        .json()['rates']['USDAUD']['rate'])
+                investment.conversion = self.fatController.usdToAudConversion
+
+                price = response['close'] if response['close'] != 'NA' else investment.priceHistory['close'][-1]
+                investment.livePrice = float(price)  # in USD
+
+            self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100)
+            self.downloadingFinished.sig.emit(investment)
 
 
 class DownloadWindow(QProgressDialog):

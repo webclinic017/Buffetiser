@@ -13,19 +13,26 @@ class Model:
 
     def portfolioSetup(self):
 
+        with open('data/usdToAudConversion.txt') as file:
+            response = file.readline()
+            self.fatController.usdToAudConversion = float(response)
+
         with open('config.csv') as csvFile:
             csvReader = csv.reader(csvFile, delimiter=',')
             for row in csvReader:
                 if row[0] == 'key':
                     self.fatController.key = row[1]
+
                 elif row[0] == 'share':
                     self.portfolio.append(Share(InvestmentType.Share,
+                                                1,
                                                 row[1],
                                                 row[2],
                                                 row[3],
                                                 row[4]))
                 elif row[0] == 'crypto':
                     self.portfolio.append(Crypto(InvestmentType.Crypto,
+                                                 self.fatController.usdToAudConversion,
                                                  row[1],
                                                  row[2],
                                                  row[3],
@@ -44,15 +51,16 @@ class Model:
         portfolioSum = []
         for day in range(0, 255):
             daySum = 0
-            for stock in self.portfolio:
+            for investment in self.portfolio:
                 try:
-                    daySum += stock.priceHistory['close'][day]
+                    daySum += investment.priceHistory['close'][day] * investment.conversion
                 except IndexError:
                     pass  # It doesn't matter
             portfolioSum.append(daySum)
 
         return portfolioSum
 
+    def writeUsdToAudConversionValue(self):
 
-
-
+        with open('data/usdToAudConversion.txt', 'w') as file:
+            file.write(str(self.fatController.usdToAudConversion))

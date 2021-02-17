@@ -29,8 +29,8 @@ class View:
         self.mainWindow = MainWindow(self.fatController)
         self.mainWindow.show()
 
-    def updateLivePrice(self, stock):
-        self.allInvestmentPanels[stock.code].updateLivePrice(stock)
+    def updateLivePrice(self, investment):
+        self.allInvestmentPanels[investment.code].updateLivePrice(investment)
 
     def help(self, _):
         QDesktopServices.openUrl(QUrl.fromLocalFile('/Users/mullsy/workspace/Buffetiser/media/help.html'))
@@ -39,10 +39,10 @@ class View:
         config = ConfigDialog(self.fatController)
         config.show()
 
-    def createPanel(self, stock):
+    def createPanel(self, investment):
 
-        panel = investmentPanel(stock)
-        self.allInvestmentPanels[stock.code] = panel
+        panel = investmentPanel(investment)
+        self.allInvestmentPanels[investment.code] = panel
         self.topLayout.addWidget(panel, self.row, 0)
 
         spacer = QLabel('')
@@ -77,10 +77,10 @@ class View:
         totalValue = 0
         percentProfitSum = 0
         totalPercentProfit = 0
-        for stock in self.portfolio:
-            totalCost += stock.totalCost()
-            totalValue += stock.totalValue()
-            percentProfitSum += (stock.percentProfit() - 1) * 100
+        for investment in self.portfolio:
+            totalCost += investment.totalCost()
+            totalValue += investment.totalValue()
+            percentProfitSum += (investment.percentProfit() - 1) * 100
 
         if len(self.portfolio) > 0:
             totalPercentProfit = (percentProfitSum / len(self.portfolio))
