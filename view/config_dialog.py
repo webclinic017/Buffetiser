@@ -1,6 +1,7 @@
 import os
 
 from PySide2.QtCore import Qt
+from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QGridLayout, QLabel, QDialogButtonBox, QSizePolicy, QSpacerItem, \
     QDialog, QScrollArea, QWidget
 
@@ -10,7 +11,6 @@ class ConfigDialog(QDialog):
     def __init__(self, parent=None):
         super(ConfigDialog, self).__init__(parent)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
-        self.setFixedSize(500, 350)
         self.setStyleSheet("""QDialog{background-color: white;} """)
 
         layout = QGridLayout()
@@ -18,19 +18,22 @@ class ConfigDialog(QDialog):
         configPath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config.csv'))
         configValues = open(configPath, 'r').read().split('\n')
         dataIconLabel = QLabel()
-        dataIconLabel.setStyleSheet('''QLabel { background-image: '/Users/mullsy/workspace/Buffetiser/media'} ''''')
-        dataLabel = QLabel('''Get a fully functional and free API Key from ''' +
+        pixmap = QPixmap('media/eod.png').scaled(60, 60, transformMode=Qt.SmoothTransformation)
+        dataIconLabel.setPixmap(pixmap)
+        dataLabel = QLabel('''Get a fully functional and free <br>API Key from ''' +
                            '''<a href='https://eodhistoricaldata.com'>EOD Historical Data</a>''')
         dataLabel.setOpenExternalLinks(True)
+        layout.addWidget(dataLabel, 0, 0)
+        layout.addWidget(dataIconLabel, 0, 1)
 
-        layout.addWidget(dataIconLabel, 0, 0, 1, 6)
-        layout.addWidget(dataLabel, 0, 0, 1, 6)
-
+        currencyConverterIconLabel = QLabel()
+        pixmap = QPixmap('media/forex.png').scaled(50, 50, transformMode=Qt.SmoothTransformation)
+        currencyConverterIconLabel.setPixmap(pixmap)
         currencyConverterLabel = QLabel('''Currency Conversion by <a href='https://www.freeforexapi.com'>Forex</a>''')
         currencyConverterLabel.setOpenExternalLinks(True)
-        layout.addWidget(currencyConverterLabel, 1, 0, 1, 6)
-
-        layout.addWidget(QLabel('To add a new investment, edit the config.csv file.'), 2, 0, 1, 6)
+        layout.addWidget(currencyConverterLabel, 1, 0)
+        layout.addWidget(currencyConverterIconLabel, 1, 1)
+        layout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 2, 0)
 
         investmentsHeldWidget = QWidget()
         investmentsHeldLayout = QGridLayout()

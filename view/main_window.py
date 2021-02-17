@@ -1,6 +1,7 @@
 from PySide2.QtCore import Qt
+from PySide2.QtGui import QIcon, QPixmap
 from PySide2.QtWidgets import QMainWindow, QGridLayout, QDesktopWidget, QScrollArea, QWidget, QSpacerItem, \
-    QSizePolicy, QPushButton
+    QSizePolicy, QPushButton, QLabel
 
 from view.ui_elements import buffButton
 
@@ -17,7 +18,6 @@ class MainWindow(QMainWindow):
         self.ui()
 
     def ui(self):
-
         screen = QDesktopWidget().screenGeometry()
         self.setGeometry(0, 0, 1300, screen.height())
         self.setContentsMargins(0, 0, 0, 0)
@@ -47,6 +47,10 @@ class MainWindow(QMainWindow):
 
         self.view.sideLayout.setContentsMargins(0, 0, 0, 0)
         self.view.sideLayout.setSpacing(5)
+        iconLabel = QLabel()
+        pixmap = QPixmap('media/icon.png').scaled(50, 50, transformMode=Qt.SmoothTransformation)
+        iconLabel.setPixmap(pixmap)
+        self.view.sideLayout.addWidget(iconLabel)
         self.view.sideLayout.addWidget(buffButton('Help', 50, False, 'white', '#DDD', self.fatController.view.help))
         self.view.sideLayout.addWidget(buffButton('Config', 50, False, 'white', '#DDD', self.fatController.view.config))
         self.view.sideLayout.addWidget(buffButton('Live',
