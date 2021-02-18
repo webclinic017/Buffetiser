@@ -29,8 +29,8 @@ class View:
         self.mainWindow = MainWindow(self.fatController)
         self.mainWindow.show()
 
-    def updateLivePrice(self, investment):
-        self.allInvestmentPanels[investment.code].updateLivePrice(investment)
+    def updateAllFields(self, investment):
+        self.allInvestmentPanels[investment.code].updateAll()
 
     def help(self, _):
         QDesktopServices.openUrl(QUrl.fromLocalFile('/Users/mullsy/workspace/Buffetiser/media/help.html'))

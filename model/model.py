@@ -22,7 +22,6 @@ class Model:
             for row in csvReader:
                 if row[0] == 'key':
                     self.fatController.key = row[1]
-
                 elif row[0] == 'share':
                     self.portfolio.append(Share(InvestmentType.Share,
                                                 1,
@@ -42,7 +41,7 @@ class Model:
         progressDialog = DownloadWindow()
         progressDialog.show()
         dlTread = DownloadThread(self.fatController, progressDialog)
-        dlTread.downloadingFinished.sig.connect(self.fatController.view.updateLivePrice)
+        dlTread.downloadingFinished.sig.connect(self.fatController.view.updateAllFields)
         dlTread.start()
 
     def calculatePortfolioTotals(self):

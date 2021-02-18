@@ -55,9 +55,9 @@ class Investment:
 
             for entry in response:
                 if entry['date'] is None or \
-                        entry['high'] is None or \
-                        entry['low'] is None or \
-                        entry['close'] is None:
+                   entry['high'] is None or \
+                   entry['low'] is None or \
+                   entry['close'] is None:
                     continue
                 else:
                     prices['date'].append(entry['date'])
@@ -78,22 +78,3 @@ class Crypto(Investment):
     def __init__(self, investmentType, conversion, code, name, held, cost):
         super().__init__(investmentType, conversion, code, name, cost)
         self.held = float(held)
-
-    # def totalCost(self):
-    #     return self.held * self.cost * self.conversion
-    #
-    # def totalValue(self):
-    #     return self.held * self.livePrice
-    #
-    # def percentProfit(self):
-    #     return self.totalValue() / self.totalCost()
-    #
-    # @property
-    # def some_value(self):
-    #     return self._actual
-    #
-    # @some_value.setter
-    # def some_value(self, value):
-    #     print ("some_value changed to", value)
-    #     self._actual = value
-
