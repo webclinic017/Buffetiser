@@ -1,7 +1,8 @@
 config.csv
+config.xlsx
 data/
 *.pyc
-__pycache__/
-view/__pycache__/
+model/__pycache__/*
+view//__pycache__/*
 __init__.py
 bk/
