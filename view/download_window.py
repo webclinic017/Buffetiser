@@ -33,21 +33,21 @@ class DownloadThread(threading.Thread):
 
     def run(self):
 
-        if not self.halt:
-            today = datetime.today()
-            if self.symbol:
-                self.portfolio = [stock.code for stock in self.portfolio if stock.code == self.symbol]
-            try:
-                os.mkdir(DATA_PATH)
-            except FileExistsError as error:
-                if os.path.isdir(DATA_PATH):
-                    pass
-                else:
-                    print('Unexpected FileExistsError while creating data directory:', error)
-            except OSError as error:
-                print('Unexpected OSError while creating data directory:', error)
-            numberOfStocks = len(self.portfolio)
-            for count, investment in enumerate(self.portfolio):
+        today = datetime.today()
+        if self.symbol:
+            self.portfolio = [stock.code for stock in self.portfolio if stock.code == self.symbol]
+        try:
+            os.mkdir(DATA_PATH)
+        except FileExistsError as error:
+            if os.path.isdir(DATA_PATH):
+                pass
+            else:
+                print('Unexpected FileExistsError while creating data directory:', error)
+        except OSError as error:
+            print('Unexpected OSError while creating data directory:', error)
+        numberOfStocks = len(self.portfolio)
+        for count, investment in enumerate(self.portfolio):
+            if not self.halt:
                 if investment.investmentType == InvestmentType.Share:
                     # Update historical share data
                     self.getShare(today, investment)
@@ -68,18 +68,18 @@ class DownloadThread(threading.Thread):
               '&from={}-{}-{}'.format(today.year - 1, today.month, today.strftime("%d")) + \
               '&to={}-{}-{}'.format(today.year, today.month, today.strftime("%d")) + \
               '&g=m'
-        # response = requests.get(url=url).json()
-        # with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
-        #     json.dump(response, outfile)
-        #
-        # # Update current priceHistory
-        # url = 'https://eodhistoricaldata.com/api/real-time/' + \
-        #       investment.code + \
-        #       '.AU?api_token=' + \
-        #       self.fatController.key + \
-        #       '&fmt=json'
-        # response = requests.get(url=url).json()
-        # investment.livePrice = float(response['close'])
+        response = requests.get(url=url).json()
+        with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
+            json.dump(response, outfile)
+
+        # Update current priceHistory
+        url = 'https://eodhistoricaldata.com/api/real-time/' + \
+              investment.code + \
+              '.AU?api_token=' + \
+              self.fatController.key + \
+              '&fmt=json'
+        response = requests.get(url=url).json()
+        investment.livePrice = float(response['close'])
 
     def getCrypto(self, today, investment):
         url = 'https://eodhistoricaldata.com/api/eod/' + \
@@ -112,8 +112,8 @@ class DownloadThread(threading.Thread):
         investment.livePrice = float(price)  # in USD
 
     def getCoinSpot(self):
-        api_key = '7a95faa7cff89c7c11dd804544949252'
-        api_secret = '08TV3MDJUQN7JDM5L8EVA5ZFXV2ZD7D1NQNYP68H5TK3TZVTUN96YQR2JGCGPQHUUTCCZHTFRMBACL2L'
+        api_key = '7a95f252'
+        api_secret = '08TV3MDJUQN7JDM5L8PQHUUTCCZHTFRMBACL2L'
 
         client = Coinspot(api_key, api_secret)
         print(client.balances())

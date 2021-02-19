@@ -40,9 +40,9 @@ class Model:
                                                  row[5]))
 
     def readAllLive(self, _):
-        dlTread = DownloadThread(self.fatController)
-        dlTread.downloadingFinished.sig.connect(self.fatController.view.updateAllFields)
-        dlTread.start()
+        self.fatController.downloadThread = DownloadThread(self.fatController)
+        self.fatController.downloadThread.downloadingFinished.sig.connect(self.fatController.view.updateAllFields)
+        self.fatController.downloadThread.start()
 
     def calculatePortfolioTotals(self):
 
