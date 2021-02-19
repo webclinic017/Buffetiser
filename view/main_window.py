@@ -1,8 +1,9 @@
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon, QPixmap
+from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QMainWindow, QGridLayout, QDesktopWidget, QScrollArea, QWidget, QSpacerItem, \
-    QSizePolicy, QPushButton, QLabel
+    QSizePolicy, QLabel
 
+from view.download_window import DownloadWindow
 from view.ui_elements import buffButton
 
 
@@ -14,6 +15,7 @@ class MainWindow(QMainWindow):
         self.fatController = fatController
         self.view = fatController.view
         self.portfolio = self.fatController.model.portfolio
+        self.progressDialog = DownloadWindow()
 
         self.ui()
 
@@ -50,6 +52,7 @@ class MainWindow(QMainWindow):
         iconLabel = QLabel()
         pixmap = QPixmap('media/icon.png').scaled(50, 50, transformMode=Qt.SmoothTransformation)
         iconLabel.setPixmap(pixmap)
+        iconLabel.setFixedSize(50, 50)
         self.view.sideLayout.addWidget(iconLabel)
         self.view.sideLayout.addWidget(buffButton('Help', 50, False, 'white', '#DDD', self.fatController.view.help))
         self.view.sideLayout.addWidget(buffButton('Config', 50, False, 'white', '#DDD', self.fatController.view.config))
@@ -60,11 +63,12 @@ class MainWindow(QMainWindow):
                                                   '#DDD',
                                                   self.fatController.model.readAllLive))
         self.view.sideLayout.addWidget(buffButton('Quit', 50, False, 'white', '#DDD', self.fatController.quitApp))
-        verticalSpacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        self.view.sideLayout.addItem(verticalSpacer)
+        self.view.sideLayout.addWidget(self.progressDialog)
+        self.progressDialog.show()
+        self.view.sideLayout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         sideWidget = QWidget()
-        sideWidget.setFixedSize(50, 980)
+        sideWidget.setFixedSize(55, 980)
         sideWidget.setStyleSheet("""QWidget {background-color: '#DD0';}""")
         sideWidget.setLayout(self.view.sideLayout)
 

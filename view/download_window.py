@@ -5,9 +5,11 @@ from datetime import datetime
 
 import requests
 from PySide2.QtCore import QObject, Signal, Qt
+from PySide2.QtGui import QPalette, QBrush, QColor
 from PySide2.QtWidgets import QProgressDialog
 
 from model.data_structures import InvestmentType
+from view.qroundprogressbar import QRoundProgressBar
 
 DATA_PATH = 'data'
 
@@ -19,9 +21,9 @@ class DownloadSignal(QObject):
 class DownloadThread(threading.Thread):
     downloadingFinished = DownloadSignal()
 
-    def __init__(self, fatController, downloadingWindow, symbol=None):
+    def __init__(self, fatController, symbol=None):
         threading.Thread.__init__(self)
-        self.downloadingWindow = downloadingWindow
+        self.downloadingWindow = fatController.view.mainWindow.progressDialog
         self.fatController = fatController
         self.portfolio = fatController.model.portfolio
         self.symbol = symbol
@@ -42,7 +44,6 @@ class DownloadThread(threading.Thread):
             print('Unexpected OSError while creating data directory:', error)
         numberOfStocks = len(self.portfolio)
         for count, investment in enumerate(self.portfolio):
-            self.downloadingWindow.setLabelText(investment.code)
             if investment.investmentType == InvestmentType.Share:
                 # Update historical share data
                 self.getShare(today, investment)
@@ -51,7 +52,7 @@ class DownloadThread(threading.Thread):
                 # Update historical crypto data
                 self.getCrypto(today, investment)
 
-            self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100)
+            self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100, investment.code)
             self.downloadingFinished.sig.emit(investment)
 
     def getShare(self, today, investment):
@@ -107,13 +108,22 @@ class DownloadThread(threading.Thread):
         investment.livePrice = float(price)  # in USD
 
 
-class DownloadWindow(QProgressDialog):
-    def __init__(self, parent=None):
-        QProgressDialog.__init__(self, parent)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
-        self.setGeometry(300, 300, 300, 50)
+class DownloadWindow(QRoundProgressBar):
+    def __init__(self):
+        super(DownloadWindow, self).__init__()
 
-    def setProgress(self, value):
-        if value >= 100:
-            value = 100
-        self.setValue(value)
+        self.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
+
+        self.setStyleSheet("""QWidget {background-color: #DDD}""")
+        palette = QPalette()
+        brush = QBrush(QColor(0, 0, 255))
+        brush.setStyle(Qt.SolidPattern)
+        palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
+
+        self.setPalette(palette)
+
+        self.setFixedSize(55, 55)
+
+    def setProgress(self, value, text):
+        self.setValue(value, text)
+        print(value, text)

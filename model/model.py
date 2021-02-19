@@ -38,9 +38,7 @@ class Model:
                                                  row[4]))
 
     def readAllLive(self, _):
-        progressDialog = DownloadWindow()
-        progressDialog.show()
-        dlTread = DownloadThread(self.fatController, progressDialog)
+        dlTread = DownloadThread(self.fatController)
         dlTread.downloadingFinished.sig.connect(self.fatController.view.updateAllFields)
         dlTread.start()
 
