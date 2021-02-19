@@ -9,11 +9,12 @@ class InvestmentType(enum.Enum):
 
 
 class Investment:
-    def __init__(self, investmentType, conversion, code, name, cost):
+    def __init__(self, investmentType, conversion, code, name, costPerUnit, overallCost):
         self.investmentType = investmentType
         self.code = str(code)
         self.name = str(name)
-        self.cost = float(cost)
+        self.costPerUnit = float(costPerUnit) if costPerUnit else None
+        self.overallCost = float(overallCost) if overallCost else None
         self.held = 0
         self.livePrice = -1
         self.conversion = conversion
@@ -26,7 +27,7 @@ class Investment:
         self.livePrice = self.priceHistory['close'][-1] * self.conversion
 
     def totalCost(self):
-        return self.held * self.cost * self.conversion
+        return self.overallCost if self.overallCost else (self.held * self.costPerUnit * self.conversion)
 
     def totalValue(self):
         return self.held * self.livePrice * self.conversion
@@ -35,7 +36,7 @@ class Investment:
         return self.totalValue() - self.totalCost()
 
     def percentProfit(self):
-        return self.totalValue() / self.totalCost()
+        return ((self.totalValue() / self.totalCost()) - 1) * 100
 
     def getTickerData(self, code):
         prices = {'date': [],
@@ -69,12 +70,12 @@ class Investment:
 
 
 class Share(Investment):
-    def __init__(self, investmentType, conversion, code, name, held, cost):
-        super().__init__(investmentType, conversion, code, name, cost)
+    def __init__(self, investmentType, conversion, code, name, held, costPerUnit, overallCost):
+        super().__init__(investmentType, conversion, code, name, costPerUnit, overallCost)
         self.held = int(held)
 
 
 class Crypto(Investment):
-    def __init__(self, investmentType, conversion, code, name, held, cost):
-        super().__init__(investmentType, conversion, code, name, cost)
+    def __init__(self, investmentType, conversion, code, name, held, costPerUnit, overallCost):
+        super().__init__(investmentType, conversion, code, name, costPerUnit, overallCost)
         self.held = float(held)

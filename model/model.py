@@ -28,14 +28,16 @@ class Model:
                                                 row[1],
                                                 row[2],
                                                 row[3],
-                                                row[4]))
+                                                row[4],
+                                                row[5]))
                 elif row[0] == 'crypto':
                     self.portfolio.append(Crypto(InvestmentType.Crypto,
                                                  self.fatController.usdToAudConversion,
                                                  row[1],
                                                  row[2],
                                                  row[3],
-                                                 row[4]))
+                                                 row[4],
+                                                 row[5]))
 
     def readAllLive(self, _):
         dlTread = DownloadThread(self.fatController)

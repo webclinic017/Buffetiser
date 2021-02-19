@@ -35,7 +35,7 @@ class investmentPanel(QWidget):
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; border-left: 1px solid #DDD; border-bottom: 1px solid #DDD;} """)
         self.detailsLayout.addWidget(label, 0, 1)
-        label = QLabel('${:.2f}'.format(investment.cost))
+        label = QLabel('${:.2f}'.format(investment.costPerUnit))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
@@ -65,8 +65,7 @@ class investmentPanel(QWidget):
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; border-left: 1px solid #DDD; border-bottom: 1px solid #DDD;} """)
         self.detailsLayout.addWidget(label, 2, 1)
-        costPrice = investment.held * investment.cost
-        label = QLabel('${:.2f}'.format(costPrice))
+        label = QLabel('${:.2f}'.format(self.investment.totalCost()))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 

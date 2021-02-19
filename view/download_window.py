@@ -1,6 +1,7 @@
 import json
 import threading
 import os
+import time
 from datetime import datetime
 
 import requests
@@ -8,6 +9,7 @@ from PySide2.QtCore import QObject, Signal, Qt
 from PySide2.QtGui import QPalette, QBrush, QColor
 from PySide2.QtWidgets import QProgressDialog
 
+from model.CoinSpot import Coinspot
 from model.data_structures import InvestmentType
 from view.qroundprogressbar import QRoundProgressBar
 
@@ -27,33 +29,35 @@ class DownloadThread(threading.Thread):
         self.fatController = fatController
         self.portfolio = fatController.model.portfolio
         self.symbol = symbol
+        self.halt = False
 
     def run(self):
 
-        today = datetime.today()
-        if self.symbol:
-            self.portfolio = [stock.code for stock in self.portfolio if stock.code == self.symbol]
-        try:
-            os.mkdir(DATA_PATH)
-        except FileExistsError as error:
-            if os.path.isdir(DATA_PATH):
-                pass
-            else:
-                print('Unexpected FileExistsError while creating data directory:', error)
-        except OSError as error:
-            print('Unexpected OSError while creating data directory:', error)
-        numberOfStocks = len(self.portfolio)
-        for count, investment in enumerate(self.portfolio):
-            if investment.investmentType == InvestmentType.Share:
-                # Update historical share data
-                self.getShare(today, investment)
+        if not self.halt:
+            today = datetime.today()
+            if self.symbol:
+                self.portfolio = [stock.code for stock in self.portfolio if stock.code == self.symbol]
+            try:
+                os.mkdir(DATA_PATH)
+            except FileExistsError as error:
+                if os.path.isdir(DATA_PATH):
+                    pass
+                else:
+                    print('Unexpected FileExistsError while creating data directory:', error)
+            except OSError as error:
+                print('Unexpected OSError while creating data directory:', error)
+            numberOfStocks = len(self.portfolio)
+            for count, investment in enumerate(self.portfolio):
+                if investment.investmentType == InvestmentType.Share:
+                    # Update historical share data
+                    self.getShare(today, investment)
 
-            elif investment.investmentType == InvestmentType.Crypto:
-                # Update historical crypto data
-                self.getCrypto(today, investment)
+                elif investment.investmentType == InvestmentType.Crypto:
+                    # Update historical crypto data
+                    self.getCrypto(today, investment)
 
-            self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100, investment.code)
-            self.downloadingFinished.sig.emit(investment)
+                self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100, investment.code)
+                self.downloadingFinished.sig.emit(investment)
 
     def getShare(self, today, investment):
         url = 'https://eodhistoricaldata.com/api/eod/' + \
@@ -64,18 +68,18 @@ class DownloadThread(threading.Thread):
               '&from={}-{}-{}'.format(today.year - 1, today.month, today.strftime("%d")) + \
               '&to={}-{}-{}'.format(today.year, today.month, today.strftime("%d")) + \
               '&g=m'
-        response = requests.get(url=url).json()
-        with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
-            json.dump(response, outfile)
-
-        # Update current priceHistory
-        url = 'https://eodhistoricaldata.com/api/real-time/' + \
-              investment.code + \
-              '.AU?api_token=' + \
-              self.fatController.key + \
-              '&fmt=json'
-        response = requests.get(url=url).json()
-        investment.livePrice = float(response['close'])
+        # response = requests.get(url=url).json()
+        # with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
+        #     json.dump(response, outfile)
+        #
+        # # Update current priceHistory
+        # url = 'https://eodhistoricaldata.com/api/real-time/' + \
+        #       investment.code + \
+        #       '.AU?api_token=' + \
+        #       self.fatController.key + \
+        #       '&fmt=json'
+        # response = requests.get(url=url).json()
+        # investment.livePrice = float(response['close'])
 
     def getCrypto(self, today, investment):
         url = 'https://eodhistoricaldata.com/api/eod/' + \
@@ -107,6 +111,13 @@ class DownloadThread(threading.Thread):
         price = response['close'] if response['close'] != 'NA' else investment.priceHistory['close'][-1]
         investment.livePrice = float(price)  # in USD
 
+    def getCoinSpot(self):
+        api_key = '7a95faa7cff89c7c11dd804544949252'
+        api_secret = '08TV3MDJUQN7JDM5L8EVA5ZFXV2ZD7D1NQNYP68H5TK3TZVTUN96YQR2JGCGPQHUUTCCZHTFRMBACL2L'
+
+        client = Coinspot(api_key, api_secret)
+        print(client.balances())
+
 
 class DownloadWindow(QRoundProgressBar):
     def __init__(self):
@@ -126,4 +137,3 @@ class DownloadWindow(QRoundProgressBar):
 
     def setProgress(self, value, text):
         self.setValue(value, text)
-        print(value, text)
