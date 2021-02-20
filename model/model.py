@@ -1,7 +1,7 @@
 import csv
 
 from model.data_structures import InvestmentType, Share, Crypto
-from view.download_window import DownloadWindow, DownloadThread
+from view.download_window import DownloadThread
 
 
 class Model:

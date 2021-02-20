@@ -38,7 +38,7 @@ class View:
         self.allInvestmentPanels[investment.code].updateAll()
 
     def help(self, _):
-        QDesktopServices.openUrl(QUrl.fromLocalFile('/Users/mullsy/workspace/Buffetiser/media/help.html'))
+        QDesktopServices.openUrl(QUrl('file:help/index.html'))
 
     def config(self, _):
         config = ConfigDialog(self.fatController)

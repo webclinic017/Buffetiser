@@ -1,7 +1,6 @@
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QMainWindow, QGridLayout, QDesktopWidget, QScrollArea, QWidget, QSpacerItem, \
-    QSizePolicy, QLabel
+    QSizePolicy
 
 from control.config import COLOUR0, COLOUR1, COLOUR2, COLOUR3
 from view.download_window import DownloadWindow

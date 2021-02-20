@@ -9,6 +9,7 @@ from PySide2.QtGui import QPalette, QBrush, QColor
 
 from control.config import COLOUR0, COLOUR3
 # from model.CoinSpot import Coinspot
+from model.CoinSpot import Coinspot
 from model.data_structures import InvestmentType
 from view.qroundprogressbar import QRoundProgressBar
 
@@ -58,6 +59,7 @@ class DownloadThread(threading.Thread):
 
                 self.downloadingWindow.setProgress(((1 + count) / numberOfStocks) * 100, investment.code)
                 self.downloadingFinished.sig.emit(investment)
+        self.downloadingWindow.hide()
 
     def getShare(self, today, investment):
         url = 'https://eodhistoricaldata.com/api/eod/' + \
@@ -111,12 +113,13 @@ class DownloadThread(threading.Thread):
         price = response['close'] if response['close'] != 'NA' else investment.priceHistory['close'][-1]
         investment.livePrice = float(price)  # in USD
 
-    # def getCoinSpot(self):
-    #     api_key = '7a95f252'
-    #     api_secret = '08TV3MDJUQN7JDM5L8PQHUUTCCZHTFRMBACL2L'
-    #
-    #     client = Coinspot(api_key, api_secret)
-    #     print(client.balances())
+    def getCoinSpot(self):
+        api_key = '7a95f252'
+        api_secret = '08TV3MDJUQN7JDM5L8PQHUUTCCZHTFRMBACL2L'
+
+        client = Coinspot(api_key, api_secret)
+        print(client.balances())
+        print(self.portfolio)
 
 
 class DownloadWindow(QRoundProgressBar):
@@ -124,7 +127,6 @@ class DownloadWindow(QRoundProgressBar):
         super(DownloadWindow, self).__init__()
 
         self.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
-
         self.setStyleSheet("""QWidget {background-color: """ + COLOUR0 + """}""")
         palette = QPalette()
         brush = QBrush(QColor(COLOUR3))
@@ -132,7 +134,6 @@ class DownloadWindow(QRoundProgressBar):
         palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
 
         self.setPalette(palette)
-
         self.setFixedSize(50, 50)
 
     def setProgress(self, value, text):

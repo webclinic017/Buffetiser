@@ -35,13 +35,16 @@ class investmentPanel(QWidget):
 
         label = QLabel('Cost Price:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        label.setStyleSheet(
-            """QWidget{ padding-right: 10px; border-left: 1px solid  """ + COLOUR3 + """; border-bottom: 1px solid  """ + COLOUR3 + """;} """)
+        label.setStyleSheet("""QWidget{ padding-right: 10px; 
+                                        border-top: 1px solid """ + COLOUR3 + """; 
+                                        border-left: 1px solid  """ + COLOUR3 + """; 
+                                        border-bottom: 1px solid  """ + COLOUR3 + """;} """)
         self.detailsLayout.addWidget(label, 0, 1)
         label = QLabel('${:.2f}'.format(investment.costPerUnit))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
+                        border-top: 1px solid """ + COLOUR3 + """; 
                         border-left: 1px solid """ + COLOUR3 + """; 
                         border-right: 1px solid """ + COLOUR3 + """; 
                         border-bottom: 1px solid """ + COLOUR3 + """;} """)

@@ -23,7 +23,7 @@ class ConfigDialog(QDialog):
         iconLabel = QLabel()
         pixmap = QPixmap('media/icon.png').scaled(128, 128, transformMode=Qt.SmoothTransformation)
         iconLabel.setPixmap(pixmap)
-        iconLabel.setStyleSheet("""QLabel { padding-left: 100;""")
+        iconLabel.setStyleSheet("""QLabel { padding-left: 15;}""")
         layout.addWidget(iconLabel, 0, 0, 2, 1)
 
         dataIconLabel = QLabel()
@@ -41,7 +41,7 @@ class ConfigDialog(QDialog):
         layout.addWidget(dataIconLabel, 0, 2)
 
         currencyConverterIconLabel = QLabel()
-        pixmap = QPixmap('media/forex.png').scaled(50, 50, transformMode=Qt.SmoothTransformation)
+        pixmap = QPixmap('media/forex.png').scaled(60, 60, transformMode=Qt.SmoothTransformation)
         currencyConverterIconLabel.setPixmap(pixmap)
         currencyConverterLabel = QLabel('''Currency Conversion by ''' +
                                         '''<a style = "color: ''' +
