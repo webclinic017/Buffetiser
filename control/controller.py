@@ -21,6 +21,7 @@ class FatController(QWidget):
         self.view.showMainWindow()
 
     def quitApp(self, exitCode=0):
-        self.downloadThread.halt = True
+        if self.downloadThread:
+            self.downloadThread.halt = True
         self.close()
         exit(exitCode)

@@ -5,6 +5,10 @@ import pygal
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGridLayout, QLabel
+from pygal.style import DarkStyle, NeonStyle
+
+from control.config import DARK0, DARK3, DARK1, RED, GREEN
+from model.data_structures import Crypto
 
 
 class investmentPanel(QWidget):
@@ -24,8 +28,7 @@ class investmentPanel(QWidget):
 
     def createPanel(self, investment):
 
-        self.setFixedWidth(1200)
-        self.setStyleSheet("""QWidget{ background-color: white;} """)
+        self.setStyleSheet("""QWidget{ background-color: """ + DARK0 + """; color: """ + DARK3 + """} """)
         self.detailsLayout.setContentsMargins(0, 0, 0, 0)
         self.detailsLayout.setSpacing(0)
         self.setLayout(self.detailsLayout)
@@ -33,76 +36,80 @@ class investmentPanel(QWidget):
         label = QLabel('Cost Price:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
-            """QWidget{ padding-right: 10px; border-left: 1px solid #DDD; border-bottom: 1px solid #DDD;} """)
+            """QWidget{ padding-right: 10px; border-left: 1px solid  """ + DARK3 + """; border-bottom: 1px solid  """ + DARK3 + """;} """)
         self.detailsLayout.addWidget(label, 0, 1)
         label = QLabel('${:.2f}'.format(investment.costPerUnit))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-right: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD;} """)
+                        border-left: 1px solid """ + DARK3 + """; 
+                        border-right: 1px solid """ + DARK3 + """; 
+                        border-bottom: 1px solid """ + DARK3 + """;} """)
         self.detailsLayout.addWidget(label, 0, 2)
 
         label = QLabel('Held:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD;} """)
+                        border-left: 1px solid  """ + DARK3 + """; 
+                        border-bottom: 1px solid  """ + DARK3 + """} """)
         self.detailsLayout.addWidget(label, 1, 1)
-        label = QLabel('{:.4f}'.format(investment.held))
+        heldText = '{:.4f}'.format(investment.held) if investment.investmentType == Crypto \
+            else '{}'.format(investment.held)
+        label = QLabel(heldText)
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD; 
-                        border-right: 1px solid #DDD;} """)
+                        border-left: 1px solid  """ + DARK3 + """; 
+                        border-bottom: 1px solid  """ + DARK3 + """; 
+                        border-right: 1px solid  """ + DARK3 + """;} """)
         self.detailsLayout.addWidget(label, 1, 2)
 
         label = QLabel('Total Cost:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        label.setStyleSheet(
-            """QWidget{ padding-right: 10px; border-left: 1px solid #DDD; border-bottom: 1px solid #DDD;} """)
+        label.setStyleSheet( """QWidget{ padding-right: 10px; 
+                                         border-left: 1px solid  """ + DARK3 + """; 
+                                         border-bottom: 1px solid  """ + DARK3 + """;} """)
         self.detailsLayout.addWidget(label, 2, 1)
         label = QLabel('${:.2f}'.format(self.investment.totalCost()))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-right: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD;} """)
+                        border-left: 1px solid  """ + DARK3 + """; 
+                        border-right: 1px solid  """ + DARK3 + """; 
+                        border-bottom: 1px solid  """ + DARK3 + """;} """)
         self.detailsLayout.addWidget(label, 2, 2)
 
         label = QLabel('Live Price:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD;} """)
+                        border-left: 1px solid  """ + DARK3 + """; 
+                        border-bottom: 1px solid  """ + DARK3 + """;} """)
 
         self.detailsLayout.addWidget(label, 3, 1)
         label = QLabel('Value:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD;} """)
+                        border-left: 1px solid  """ + DARK3 + """; 
+                        border-bottom: 1px solid  """ + DARK3 + """;} """)
         self.detailsLayout.addWidget(label, 4, 1)
 
         label = QLabel('Profit:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD;} """)
+                        border-left: 1px solid  """ + DARK3 + """; 
+                        border-bottom: 1px solid  """ + DARK3 + """;} """)
         self.detailsLayout.addWidget(label, 5, 1)
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         label = QLabel('')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet("""QWidget{ padding-right: 10px; 
-                                        border-left: 1px solid #DDD;} """)
+                                        border-left: 1px solid  """ + DARK3 + """;
+                                        border-bottom: 1px solid  """ + DARK3 + """;} """)
         self.detailsLayout.addWidget(label, 6, 1)
 
         self.livePriceLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
@@ -140,7 +147,8 @@ class investmentPanel(QWidget):
                                     max_scale=6,
                                     legend_box_size=5,
                                     x_label_rotation=6.25,
-                                    show_minor_x_labels=False)
+                                    show_minor_x_labels=False,
+                                    style=NeonStyle)
         investmentPlot.title = '{} ({})'.format(self.investment.name, self.investment.code)
 
         dateList = [x for x in self.investment.priceHistory['date']]
@@ -158,34 +166,34 @@ class investmentPanel(QWidget):
         self.livePriceLabel.setText('${:.2f}'.format(self.investment.livePrice))
         self.livePriceLabel.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD; 
-                        border-right: 1px solid #DDD;} """)
+                        border-left: 1px solid  """ + DARK3 + """; 
+                        border-bottom: 1px solid  """ + DARK3 + """; 
+                        border-right: 1px solid  """ + DARK3 + """;} """)
 
     def currentValue(self):
         self.currentValueLabel.setText('${:.2f}'.format(self.investment.totalValue()))
         self.currentValueLabel.setStyleSheet(
             """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid #DDD; 
-                        border-bottom: 1px solid #DDD; 
-                        border-right: 1px solid #DDD;} """)
+                        border-left: 1px solid  """ + DARK3 + """; 
+                        border-bottom: 1px solid  """ + DARK3 + """; 
+                        border-right: 1px solid  """ + DARK3 + """;} """)
 
     def profit(self):
         if self.investment.profit() > 0:
             self.profitLabel.setStyleSheet(
-                """QWidget{ color: green; 
+                """QWidget{ color: """ + GREEN + """; 
                             padding-right: 10px; 
-                            border-left: 1px solid #DDD; 
-                            border-bottom: 1px solid #DDD; 
-                            border-right: 1px solid #DDD;} """)
+                            border-left: 1px solid  """ + DARK3 + """; 
+                            border-bottom: 1px solid  """ + DARK3 + """; 
+                            border-right: 1px solid  """ + DARK3 + """;} """)
             profitTextFormat = '${:.2f}'
         else:
             self.profitLabel.setStyleSheet(
-                """QWidget{ color: red; 
+                """QWidget{ color: """ + RED + """; 
                             padding-right: 10px; 
-                            border-left: 1px solid #DDD; 
-                            border-bottom: 1px solid #DDD; 
-                            border-right: 1px solid #DDD;} """)
+                            border-left: 1px solid  """ + DARK3 + """; 
+                            border-bottom: 1px solid  """ + DARK3 + """; 
+                            border-right: 1px solid  """ + DARK3 + """;} """)
             profitTextFormat = '-${:.2f}'
         self.profitLabel.setText(profitTextFormat.format(abs(self.investment.profit())))
 
@@ -193,16 +201,18 @@ class investmentPanel(QWidget):
         self.percentProfitLabel.setText('{:.2f}%'.format(self.investment.percentProfit()))
         if self.investment.percentProfit() > 0:
             self.percentProfitLabel.setStyleSheet(
-                """QWidget{ color: green; 
+                """QWidget{ color: """ + GREEN + """; 
                             padding-right: 10px; 
-                            border-left: 1px solid #DDD; 
-                            border-right: 1px solid #DDD;} """)
+                            border-left: 1px solid  """ + DARK3 + """; 
+                            border-right: 1px solid  """ + DARK3 + """;
+                            border-bottom: 1px solid  """ + DARK3 + """;} """)
         else:
             self.percentProfitLabel.setStyleSheet(
-                """QWidget{ color: red; 
+                """QWidget{ color: """ + RED + """; 
                             padding-right: 10px; 
-                            border-left: 1px solid #DDD; 
-                            border-right: 1px solid #DDD;} """)
+                            border-left: 1px solid  """ + DARK3 + """; 
+                            border-right: 1px solid  """ + DARK3 + """;
+                            border-bottom: 1px solid  """ + DARK3 + """;} """)
 
     def updatePriceHistoryPlot(self):
         path = self.plotPriceHistory()

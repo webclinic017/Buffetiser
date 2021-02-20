@@ -7,7 +7,7 @@ import sys
 
 from PySide2.QtWidgets import QApplication
 
-from controller import FatController
+from control.controller import FatController
 
 if __name__ == '__main__':
     

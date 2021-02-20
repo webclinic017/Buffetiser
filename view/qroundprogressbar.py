@@ -29,8 +29,10 @@ from enum import Enum
 
 from PySide2.QtCore import Slot, QRectF, Qt, QPointF
 from PySide2.QtGui import QImage, QPainter, QPaintEvent, QPen, QPainterPath, QFontMetricsF, QFont, QRadialGradient, \
-    QGradient, QPalette, QConicalGradient
+    QGradient, QPalette, QConicalGradient, QBrush
 from PySide2.QtWidgets import QWidget
+
+from control.config import DARK1
 
 
 class QRoundProgressBar(QWidget):
@@ -249,7 +251,6 @@ class QRoundProgressBar(QWidget):
 
     def drawInnerBackground(self, p: QPainter, innerRect: QRectF):
         if self.m_barStyle == self.BarStyle.DONUT:
-            p.setBrush(self.palette().alternateBase())
             p.drawEllipse(innerRect)
 
     def drawText(self, p: QPainter, innerRect: QRectF, innerRadius: float):
@@ -272,8 +273,8 @@ class QRoundProgressBar(QWidget):
         if self.m_updateFlags == self.UpdateFlags.VALUE:
             textToDraw = textToDraw.replace('%v', str(round(value, self.m_decimals)))
         if self.m_updateFlags == self.UpdateFlags.PERCENT:
-            procent = (value - self.m_min) / (self.m_max - self.m_min) * 100
-            textToDraw = textToDraw.replace('%p', str(round(procent, self.m_decimals)))
+            percent = (value - self.m_min) / (self.m_max - self.m_min) * 100
+            textToDraw = textToDraw.replace('%p', str(round(percent, self.m_decimals)))
         if self.m_updateFlags == self.UpdateFlags.MAX:
             textToDraw = textToDraw.replace('%m', str(round(self.m_max - self.m_min + 1, self.m_decimals)))
         return textToDraw

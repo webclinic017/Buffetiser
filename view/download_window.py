@@ -1,15 +1,14 @@
 import json
 import threading
 import os
-import time
 from datetime import datetime
 
 import requests
 from PySide2.QtCore import QObject, Signal, Qt
 from PySide2.QtGui import QPalette, QBrush, QColor
-from PySide2.QtWidgets import QProgressDialog
 
-from model.CoinSpot import Coinspot
+from control.config import DARK0, DARK3
+# from model.CoinSpot import Coinspot
 from model.data_structures import InvestmentType
 from view.qroundprogressbar import QRoundProgressBar
 
@@ -26,6 +25,7 @@ class DownloadThread(threading.Thread):
     def __init__(self, fatController, symbol=None):
         threading.Thread.__init__(self)
         self.downloadingWindow = fatController.view.mainWindow.progressDialog
+        self.downloadingWindow.show()
         self.fatController = fatController
         self.portfolio = fatController.model.portfolio
         self.symbol = symbol
@@ -111,12 +111,12 @@ class DownloadThread(threading.Thread):
         price = response['close'] if response['close'] != 'NA' else investment.priceHistory['close'][-1]
         investment.livePrice = float(price)  # in USD
 
-    def getCoinSpot(self):
-        api_key = '7a95f252'
-        api_secret = '08TV3MDJUQN7JDM5L8PQHUUTCCZHTFRMBACL2L'
-
-        client = Coinspot(api_key, api_secret)
-        print(client.balances())
+    # def getCoinSpot(self):
+    #     api_key = '7a95f252'
+    #     api_secret = '08TV3MDJUQN7JDM5L8PQHUUTCCZHTFRMBACL2L'
+    #
+    #     client = Coinspot(api_key, api_secret)
+    #     print(client.balances())
 
 
 class DownloadWindow(QRoundProgressBar):
@@ -125,15 +125,15 @@ class DownloadWindow(QRoundProgressBar):
 
         self.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
 
-        self.setStyleSheet("""QWidget {background-color: #DDD}""")
+        self.setStyleSheet("""QWidget {background-color: """ + DARK0 + """}""")
         palette = QPalette()
-        brush = QBrush(QColor(0, 0, 255))
+        brush = QBrush(QColor(DARK3))
         brush.setStyle(Qt.SolidPattern)
         palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
 
         self.setPalette(palette)
 
-        self.setFixedSize(55, 55)
+        self.setFixedSize(50, 50)
 
     def setProgress(self, value, text):
         self.setValue(value, text)
