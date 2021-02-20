@@ -3,7 +3,7 @@ from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QMainWindow, QGridLayout, QDesktopWidget, QScrollArea, QWidget, QSpacerItem, \
     QSizePolicy, QLabel
 
-from control.config import DARK0, DARK1, DARK2, DARK3
+from control.config import COLOUR0, COLOUR1, COLOUR2, COLOUR3
 from view.download_window import DownloadWindow
 from view.ui_elements import buffButton
 
@@ -28,14 +28,14 @@ class MainWindow(QMainWindow):
         self.view.topLayout.setContentsMargins(0, 0, 0, 0)
         self.view.topLayout.setSpacing(0)
         topWidget = QWidget()
-        topWidget.setStyleSheet("""QWidget {background-color: """ + DARK1 + """;}""")
+        topWidget.setStyleSheet("""QWidget {background-color: """ + COLOUR1 + """;}""")
         topWidget.setLayout(self.view.topLayout)
         topWidgetScroll = QScrollArea()
         topWidgetScroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         topWidgetScroll.setWidgetResizable(True)
         topWidgetScroll.setWidget(topWidget)
-        topWidgetScroll.setStyleSheet("""QScrollBar:vertical {border: 1px solid """ + DARK2 + """;
-                                                              background: """ + DARK1 + """;
+        topWidgetScroll.setStyleSheet("""QScrollBar:vertical {border: 1px solid """ + COLOUR2 + """;
+                                                              background: """ + COLOUR1 + """;
                                                               width:10px;
                                                               margin: 0px 0px 0px 0px;}""")
 
@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         self.view.bottomLayout.setSpacing(0)
         bottomWidget = QWidget()
         bottomWidget.setFixedHeight(200)
-        bottomWidget.setStyleSheet("""QWidget {color: """ + DARK3 + """; background-color: """ + DARK0 + """;}""")
+        bottomWidget.setStyleSheet("""QWidget {color: """ + COLOUR3 + """; background-color: """ + COLOUR0 + """;}""")
         bottomWidget.setLayout(self.view.bottomLayout)
 
         self.view.createTotalsPanel()
@@ -57,41 +57,41 @@ class MainWindow(QMainWindow):
         self.view.sideLayout.addWidget(buffButton('Help',
                                                   50,
                                                   False,
-                                                  DARK1,
-                                                  DARK1,
-                                                  DARK3,
-                                                  DARK3,
+                                                  COLOUR1,
+                                                  COLOUR1,
+                                                  COLOUR3,
+                                                  COLOUR3,
                                                   self.fatController.view.help))
         self.view.sideLayout.addWidget(buffButton('Config',
                                                   50,
                                                   False,
-                                                  DARK1,
-                                                  DARK1,
-                                                  DARK3,
-                                                  DARK3,
+                                                  COLOUR1,
+                                                  COLOUR1,
+                                                  COLOUR3,
+                                                  COLOUR3,
                                                   self.fatController.view.config))
         self.view.sideLayout.addWidget(buffButton('Live',
                                                   50,
                                                   False,
-                                                  DARK1,
-                                                  DARK1,
-                                                  DARK3,
-                                                  DARK3,
+                                                  COLOUR1,
+                                                  COLOUR1,
+                                                  COLOUR3,
+                                                  COLOUR3,
                                                   self.fatController.model.readAllLive))
         self.view.sideLayout.addWidget(buffButton('Quit',
                                                   50,
                                                   False,
-                                                  DARK1,
-                                                  DARK1,
-                                                  DARK3,
-                                                  DARK3,
+                                                  COLOUR1,
+                                                  COLOUR1,
+                                                  COLOUR3,
+                                                  COLOUR3,
                                                   self.fatController.quitApp))
         self.view.sideLayout.addWidget(self.progressDialog)
         self.view.sideLayout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         sideWidget = QWidget()
         sideWidget.setFixedSize(55, 980)
-        sideWidget.setStyleSheet("""QWidget {background-color: """ + DARK0 + """;}""")
+        sideWidget.setStyleSheet("""QWidget {background-color: """ + COLOUR0 + """;}""")
         sideWidget.setLayout(self.view.sideLayout)
 
         centralWidget = QWidget()
@@ -102,6 +102,6 @@ class MainWindow(QMainWindow):
         centralLayout.addWidget(bottomWidget, 1, 1, 1, 1)
         self.setCentralWidget(centralWidget)
 
-        self.setStyleSheet("""QMainWindow {background-color: """ + DARK0 + """;}""")
+        self.setStyleSheet("""QMainWindow {background-color: """ + COLOUR0 + """;}""")
         self.setAutoFillBackground(True)
         self.setWindowTitle('Buffetizer')

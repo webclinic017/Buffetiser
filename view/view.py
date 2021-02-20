@@ -7,7 +7,7 @@ from PySide2.QtGui import QPixmap, QDesktopServices
 from PySide2.QtWidgets import QGridLayout, QLabel, QVBoxLayout
 from pygal.style import NeonStyle
 
-from control.config import DARK3, RED, GREEN
+from control.config import COLOUR3, RED, GREEN, TOTALS_PLOT_STYLE
 from view.config_dialog import ConfigDialog
 from view.main_window import MainWindow
 from view.investment_panel import investmentPanel
@@ -64,7 +64,7 @@ class View:
                                 show_y_guides=False,
                                 max_scale=6,
                                 legend_box_size=5,
-                                style=NeonStyle)
+                                style=TOTALS_PLOT_STYLE)
         totalsPlot.title = "Total Portfolio Value"
         totalsPlot.add('Sum', self.fatController.model.calculatePortfolioTotals())
         path = os.path.join(tempfile.gettempdir(), 'buffetizer.png')
@@ -93,9 +93,9 @@ class View:
         label.setFixedWidth(100)
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet("""QWidget{ padding-right: 10px; 
-                                        border-left: 1px solid """ + DARK3 + """;
-                                        border-top: 1px solid """ + DARK3 + """;
-                                        border-bottom: 1px solid """ + DARK3 + """;
+                                        border-left: 1px solid """ + COLOUR3 + """;
+                                        border-top: 1px solid """ + COLOUR3 + """;
+                                        border-bottom: 1px solid """ + COLOUR3 + """;
                                         ;} """)
 
         self.bottomLayout.addWidget(label, 0, 1)
@@ -103,30 +103,30 @@ class View:
         label.setFixedWidth(110)
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet("""QWidget{ padding-right: 10px; 
-                                        border: 1px solid """ + DARK3 + """;
+                                        border: 1px solid """ + COLOUR3 + """;
                                         margin-right: 1px} """)
         self.bottomLayout.addWidget(label, 0, 2)
 
         label = QLabel('Value:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet("""QWidget{ padding-right: 10px; 
-                                        border-left: 1px solid """ + DARK3 + """; 
-                                        border-bottom: 1px solid """ + DARK3 + """;}""")
+                                        border-left: 1px solid """ + COLOUR3 + """; 
+                                        border-bottom: 1px solid """ + COLOUR3 + """;}""")
         self.bottomLayout.addWidget(label, 1, 1)
         label = QLabel('${:.2f}'.format(totalValue))
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet("""QWidget{ padding-right: 10px; 
-                                        border-left: 1px solid """ + DARK3 + """;
-                                        border-right: 1px solid """ + DARK3 + """;
-                                        border-bottom: 1px solid """ + DARK3 + """;
+                                        border-left: 1px solid """ + COLOUR3 + """;
+                                        border-right: 1px solid """ + COLOUR3 + """;
+                                        border-bottom: 1px solid """ + COLOUR3 + """;
                                         margin-right: 1px} """)
         self.bottomLayout.addWidget(label, 1, 2)
 
         label = QLabel('Profit:')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet("""QWidget{ padding-right: 10px; 
-                                        border-left: 1px solid """ + DARK3 + """; 
-                                        border-bottom: 1px solid """ + DARK3 + """;} """)
+                                        border-left: 1px solid """ + COLOUR3 + """; 
+                                        border-bottom: 1px solid """ + COLOUR3 + """;} """)
         self.bottomLayout.addWidget(label, 2, 1)
         self.profit(totalValue - totalCost)
         self.profitLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
@@ -135,8 +135,8 @@ class View:
         label = QLabel('')
         label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         label.setStyleSheet("""QWidget{ padding-right: 10px; 
-                                        border-left: 1px solid """ + DARK3 + """; 
-                                        border-bottom: 1px solid """ + DARK3 + """;} """)
+                                        border-left: 1px solid """ + COLOUR3 + """; 
+                                        border-bottom: 1px solid """ + COLOUR3 + """;} """)
         self.bottomLayout.addWidget(label, 3, 1)
         self.percentProfit(totalPercentProfit)
         self.percentProfitLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
@@ -147,17 +147,17 @@ class View:
             self.profitLabel.setStyleSheet(
                 """QWidget{ color: """ + GREEN + """; 
                             padding-right: 10px; 
-                            border-left: 1px solid """ + DARK3 + """; 
-                            border-bottom: 1px solid """ + DARK3 + """; 
-                            border-right: 1px solid """ + DARK3 + """;} """)
+                            border-left: 1px solid """ + COLOUR3 + """; 
+                            border-bottom: 1px solid """ + COLOUR3 + """; 
+                            border-right: 1px solid """ + COLOUR3 + """;} """)
             profitTextFormat = '${:.2f}'
         else:
             self.profitLabel.setStyleSheet(
                 """QWidget{ color: """ + RED + """ 
                             padding-right: 10px; 
-                            border-left: 1px solid """ + DARK3 + """; 
-                            border-bottom: 1px solid """ + DARK3 + """; 
-                            border-right: 1px solid """ + DARK3 + """;} """)
+                            border-left: 1px solid """ + COLOUR3 + """; 
+                            border-bottom: 1px solid """ + COLOUR3 + """; 
+                            border-right: 1px solid """ + COLOUR3 + """;} """)
             profitTextFormat = '-${:.2f}'
         self.profitLabel.setText(profitTextFormat.format(abs(profit)))
 
@@ -166,12 +166,12 @@ class View:
         if percentProfit > 0:
             self.percentProfitLabel.setStyleSheet("""QWidget{ color: """ + GREEN + """; 
                                                               padding-right: 25px; 
-                                                              border-right: 1px solid """ + DARK3 + """; 
-                                                              border-left: 1px solid """ + DARK3 + """; 
-                                                              border-bottom: 1px solid """ + DARK3 + """;}""")
+                                                              border-right: 1px solid """ + COLOUR3 + """; 
+                                                              border-left: 1px solid """ + COLOUR3 + """; 
+                                                              border-bottom: 1px solid """ + COLOUR3 + """;}""")
         else:
             self.percentProfitLabel.setStyleSheet("""QWidget{ color: """ + RED + """; 
                                                               padding-right: 25px; 
-                                                              border-right: 1px solid """ + DARK3 + """; 
-                                                              border-left: 1px solid """ + DARK3 + """; 
-                                                              border-bottom: 1px solid """ + DARK3 + """;}""")
+                                                              border-right: 1px solid """ + COLOUR3 + """; 
+                                                              border-left: 1px solid """ + COLOUR3 + """; 
+                                                              border-bottom: 1px solid """ + COLOUR3 + """;}""")

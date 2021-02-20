@@ -7,7 +7,7 @@ import requests
 from PySide2.QtCore import QObject, Signal, Qt
 from PySide2.QtGui import QPalette, QBrush, QColor
 
-from control.config import DARK0, DARK3
+from control.config import COLOUR0, COLOUR3
 # from model.CoinSpot import Coinspot
 from model.data_structures import InvestmentType
 from view.qroundprogressbar import QRoundProgressBar
@@ -125,9 +125,9 @@ class DownloadWindow(QRoundProgressBar):
 
         self.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
 
-        self.setStyleSheet("""QWidget {background-color: """ + DARK0 + """}""")
+        self.setStyleSheet("""QWidget {background-color: """ + COLOUR0 + """}""")
         palette = QPalette()
-        brush = QBrush(QColor(DARK3))
+        brush = QBrush(QColor(COLOUR3))
         brush.setStyle(Qt.SolidPattern)
         palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
 

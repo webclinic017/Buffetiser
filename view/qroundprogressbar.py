@@ -32,7 +32,7 @@ from PySide2.QtGui import QImage, QPainter, QPaintEvent, QPen, QPainterPath, QFo
     QGradient, QPalette, QConicalGradient, QBrush
 from PySide2.QtWidgets import QWidget
 
-from control.config import DARK1
+from control.config import COLOUR1
 
 
 class QRoundProgressBar(QWidget):

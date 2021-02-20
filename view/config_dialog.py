@@ -5,7 +5,7 @@ from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QGridLayout, QLabel, QDialogButtonBox, QSizePolicy, QSpacerItem, \
     QDialog, QScrollArea, QWidget
 
-from control.config import DARK0, DARK3, DARK2, DARK1
+from control.config import COLOUR0, COLOUR3, COLOUR2, COLOUR1
 
 
 class ConfigDialog(QDialog):
@@ -13,7 +13,7 @@ class ConfigDialog(QDialog):
     def __init__(self, parent=None):
         super(ConfigDialog, self).__init__(parent)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
-        self.setStyleSheet("""QDialog{background-color: """ + DARK0 + """;} """)
+        self.setStyleSheet("""QDialog{background-color: """ + COLOUR0 + """;} """)
 
         layout = QGridLayout()
 
@@ -23,6 +23,7 @@ class ConfigDialog(QDialog):
         iconLabel = QLabel()
         pixmap = QPixmap('media/icon.png').scaled(128, 128, transformMode=Qt.SmoothTransformation)
         iconLabel.setPixmap(pixmap)
+        iconLabel.setStyleSheet("""QLabel { padding-left: 100;""")
         layout.addWidget(iconLabel, 0, 0, 2, 1)
 
         dataIconLabel = QLabel()
@@ -30,11 +31,11 @@ class ConfigDialog(QDialog):
         dataIconLabel.setPixmap(pixmap)
         dataLabel = QLabel('''Get a fully functional and free <br>API Key from ''' +
                            '''<a style="color: ''' +
-                           DARK3 +
+                           COLOUR3 +
                            ''';" href='https://eodhistoricaldata.com'>EOD Historical Data</a>''')
         dataLabel.setStyleSheet("""QLabel{ padding-left: 100;
-                                           background-color: """ + DARK0 + """;
-                                           color: """ + DARK2 + """;}""")
+                                           background-color: """ + COLOUR0 + """;
+                                           color: """ + COLOUR2 + """;}""")
         dataLabel.setOpenExternalLinks(True)
         layout.addWidget(dataLabel, 0, 1)
         layout.addWidget(dataIconLabel, 0, 2)
@@ -42,18 +43,21 @@ class ConfigDialog(QDialog):
         currencyConverterIconLabel = QLabel()
         pixmap = QPixmap('media/forex.png').scaled(50, 50, transformMode=Qt.SmoothTransformation)
         currencyConverterIconLabel.setPixmap(pixmap)
-        currencyConverterLabel = QLabel('''Currency Conversion by <a href='https://www.freeforexapi.com'>Forex</a>''')
+        currencyConverterLabel = QLabel('''Currency Conversion by ''' +
+                                        '''<a style = "color: ''' +
+                                        COLOUR3 +
+                                        '''; "href='https://www.freeforexapi.com'>Forex</a>''')
         currencyConverterLabel.setStyleSheet("""QLabel{ padding-left: 100;
-                                                   background-color: """ + DARK0 + """;
-                                                   color: """ + DARK2 + """;}""")
+                                                        background-color: """ + COLOUR0 + """;
+                                                        color: """ + COLOUR2 + """;}""")
         currencyConverterLabel.setOpenExternalLinks(True)
         layout.addWidget(currencyConverterLabel, 1, 1)
         layout.addWidget(currencyConverterIconLabel, 1, 2)
         layout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 2, 0)
 
         investmentsHeldWidget = QWidget()
-        investmentsHeldWidget.setStyleSheet("""QWidget {background-color: """ + DARK1 + """;
-                                                        color: """ + DARK3 + """}""")
+        investmentsHeldWidget.setStyleSheet("""QWidget {background-color: """ + COLOUR1 + """;
+                                                        color: """ + COLOUR3 + """}""")
         investmentsHeldLayout = QGridLayout()
         investmentsHeldScroll = QScrollArea()
         investmentsHeldWidget.setLayout(investmentsHeldLayout)
@@ -61,8 +65,8 @@ class ConfigDialog(QDialog):
         investmentsHeldScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         investmentsHeldScroll.setWidgetResizable(True)
         investmentsHeldScroll.setWidget(investmentsHeldWidget)
-        investmentsHeldScroll.setStyleSheet("""QScrollArea {border: 1px solid """ + DARK2 + """;
-                                                                      background: """ + DARK1 + """;
+        investmentsHeldScroll.setStyleSheet("""QScrollArea {border: 1px solid """ + COLOUR2 + """;
+                                                                      background: """ + COLOUR1 + """;
                                                                       width:10px;
                                                                       margin: 0px 0px 0px 0px;}""")
 

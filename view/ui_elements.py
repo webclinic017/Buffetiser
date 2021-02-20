@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QPushButton
 
-from control.config import GREEN, DARK0, DARK3
+from control.config import GREEN, COLOUR0, COLOUR3
 
 
 def buffButton(text, height, toggle, offColour, onColour, textOffColour, textOnColour, function):
@@ -10,16 +10,16 @@ def buffButton(text, height, toggle, offColour, onColour, textOffColour, textOnC
     genericButton.clicked.connect(lambda: function(text))
     if toggle:
         genericButton.setStyleSheet("""QPushButton {background-color: """ + offColour + """; 
-                                       border: 1px solid """ + DARK0 + """;
+                                       border: 1px solid """ + COLOUR0 + """;
                                        color: """ + textOffColour + """};
                                        QPushButton::pressed{background: """ + textOnColour + """; 
                                        color: """ + onColour + """};
                                        QPushButton:hover:!pressed{border: 1px solid """ + GREEN + """;}""")
     else:
         genericButton.setStyleSheet("""QPushButton {background-color: """ + offColour + """; 
-                                       border: 1px solid """ + DARK0 + """;
+                                       border: 1px solid """ + COLOUR0 + """;
                                        color: """ + textOffColour + """;}
                                        QPushButton::pressed{background: """ + textOnColour + """; 
                                        color: """ + onColour + """;}
-                                       QPushButton:hover:!pressed{border: 1px solid """ + DARK3 + """;}""")
+                                       QPushButton:hover:!pressed{border: 1px solid """ + COLOUR3 + """;}""")
     return genericButton
