@@ -81,7 +81,7 @@ class DownloadThread(threading.Thread):
               self.fatController.key + \
               '&fmt=json'
         response = requests.get(url=url).json()
-        investment.livePrice = float(response['close'])
+        investment.live = float(response['close'])
 
     def getCrypto(self, today, investment):
         url = 'https://eodhistoricaldata.com/api/eod/' + \
@@ -111,7 +111,7 @@ class DownloadThread(threading.Thread):
         investment.conversion = self.fatController.usdToAudConversion
 
         price = response['close'] if response['close'] != 'NA' else investment.priceHistory['close'][-1]
-        investment.livePrice = float(price)  # in USD
+        investment.live = float(price)  # in USD
 
     def getCoinSpot(self):
         api_key = '7a95f252'

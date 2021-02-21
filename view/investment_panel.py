@@ -166,7 +166,7 @@ class investmentPanel(QWidget):
         return path
 
     def livePrice(self):
-        self.livePriceLabel.setText('${:.2f}'.format(self.investment.livePrice))
+        self.livePriceLabel.setText('${:.2f}'.format(self.investment.livePrice()))
         self.livePriceLabel.setStyleSheet(
             """QWidget{ padding-right: 10px; 
                         border-left: 1px solid  """ + COLOUR3 + """; 

@@ -16,7 +16,7 @@ class Investment:
         self.costPerUnit = float(costPerUnit) if costPerUnit else None
         self.overallCost = float(overallCost) if overallCost else None
         self.held = 0
-        self.livePrice = -1
+        self.live = -1
         self.conversion = conversion
         self.priceHistory = {}
         self.getTickerData(code)
@@ -24,13 +24,16 @@ class Investment:
         self.setDefaultLivePrice()
 
     def setDefaultLivePrice(self):
-        self.livePrice = self.priceHistory['close'][-1] * self.conversion
+        self.live = self.priceHistory['close'][-1] * self.conversion
+
+    def livePrice(self):
+        return self.live * self.conversion
 
     def totalCost(self):
         return self.overallCost if self.overallCost else (self.held * self.costPerUnit * self.conversion)
 
     def totalValue(self):
-        return self.held * self.livePrice * self.conversion
+        return self.held * self.live * self.conversion
 
     def profit(self):
         return self.totalValue() - self.totalCost()
