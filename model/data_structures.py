@@ -24,13 +24,13 @@ class Investment:
         self.setDefaultLivePrice()
 
     def setDefaultLivePrice(self):
-        self.livePrice = self.priceHistory['close'][-1] * self.conversion
+        self.livePrice = self.priceHistory['close'][-1]
 
     def totalCost(self):
-        return self.overallCost if self.overallCost else (self.held * self.costPerUnit * self.conversion)
+        return self.overallCost if self.overallCost else (self.held * self.costPerUnit)
 
     def totalValue(self):
-        return self.held * self.livePrice * self.conversion
+        return self.held * self.livePrice
 
     def profit(self):
         return self.totalValue() - self.totalCost()

@@ -109,9 +109,7 @@ class DownloadThread(threading.Thread):
         url = 'https://www.freeforexapi.com/api/live?pairs=USDAUD'
         self.fatController.usdToAudConversion = float(requests.get(url=url).json()['rates']['USDAUD']['rate'])
         investment.conversion = self.fatController.usdToAudConversion
-
-        price = response['close'] if response['close'] != 'NA' else investment.priceHistory['close'][-1]
-        investment.livePrice = float(price)  # in USD
+        investment.livePrice = float(response['close']) * investment.conversion if response['close'] != 'NA' else investment.priceHistory['close'][-1]
 
     def getCoinSpot(self):
         api_key = '7a95f252'
