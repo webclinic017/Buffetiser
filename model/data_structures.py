@@ -16,7 +16,7 @@ class Investment:
         self.costPerUnit = float(costPerUnit) if costPerUnit else None
         self.overallCost = float(overallCost) if overallCost else None
         self.held = 0
-        self.live = -1
+        self.currentPrice = -1
         self.conversion = conversion
         self.priceHistory = {}
         self.getTickerData(code)
@@ -24,16 +24,16 @@ class Investment:
         self.setDefaultLivePrice()
 
     def setDefaultLivePrice(self):
-        self.live = self.priceHistory['close'][-1] * self.conversion
+        self.currentPrice = self.priceHistory['close'][-1] * self.conversion
 
     def livePrice(self):
-        return self.live * self.conversion
+        return self.currentPrice * self.conversion
 
     def totalCost(self):
-        return self.overallCost if self.overallCost else (self.held * self.costPerUnit * self.conversion)
+        return self.overallCost if self.overallCost else (self.held * self.costPerUnit)
 
     def totalValue(self):
-        return self.held * self.live * self.conversion
+        return self.held * self.currentPrice * self.conversion
 
     def profit(self):
         return self.totalValue() - self.totalCost()
@@ -82,3 +82,6 @@ class Crypto(Investment):
     def __init__(self, investmentType, conversion, code, name, held, costPerUnit, overallCost):
         super().__init__(investmentType, conversion, code, name, costPerUnit, overallCost)
         self.held = float(held)
+
+    def livePrice(self):
+        return 10.0

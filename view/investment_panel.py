@@ -167,11 +167,10 @@ class investmentPanel(QWidget):
 
     def livePrice(self):
         self.livePriceLabel.setText('${:.2f}'.format(self.investment.livePrice()))
-        self.livePriceLabel.setStyleSheet(
-            """QWidget{ padding-right: 10px; 
-                        border-left: 1px solid  """ + COLOUR3 + """; 
-                        border-bottom: 1px solid  """ + COLOUR3 + """; 
-                        border-right: 1px solid  """ + COLOUR3 + """;} """)
+        self.livePriceLabel.setStyleSheet("""QLabel{ padding-right: 10px;
+                                                     border-left: 1px solid  """ + COLOUR3 + """;
+                                                     border-bottom: 1px solid  """ + COLOUR3 + """;
+                                                     border-right: 1px solid  """ + COLOUR3 + """;} """)
 
     def currentValue(self):
         self.currentValueLabel.setText('${:.2f}'.format(self.investment.totalValue()))
