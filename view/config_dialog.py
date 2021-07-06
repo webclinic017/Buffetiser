@@ -82,6 +82,9 @@ class ConfigDialog(QDialog):
         htmlLabel.setStyleSheet("""QLabel{border: 1px solid black;}""")
         investmentsHeldLayout.addWidget(htmlLabel, 3, 0, 1, 6)
 
+        # scroll = QScrollArea()
+        # scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # scroll.setWidget(investmentsHeldWidget)
         layout.addWidget(investmentsHeldWidget, 3, 0, 1, 6)
 
         buttonBox = QDialogButtonBox(self)

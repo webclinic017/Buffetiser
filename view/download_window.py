@@ -2,18 +2,19 @@ import json
 import threading
 import os
 from datetime import datetime
+from json.decoder import JSONDecodeError
+
+import websocket
+import simplejson as json
 
 import requests
 from PySide2.QtCore import QObject, Signal, Qt
 from PySide2.QtGui import QPalette, QBrush, QColor
 
-from control.config import COLOUR0, COLOUR3
-# from model.CoinSpot import Coinspot
+from control.config import COLOUR0, COLOUR3, DATA_PATH
 from model.CoinSpot import Coinspot
 from model.data_structures import InvestmentType
 from view.qroundprogressbar import QRoundProgressBar
-
-DATA_PATH = 'data'
 
 
 class DownloadSignal(QObject):
@@ -37,19 +38,6 @@ class DownloadThread(threading.Thread):
         today = datetime.today()
         if self.symbol:
             self.portfolio = [stock.code for stock in self.portfolio if stock.code == self.symbol]
-        try:
-            os.mkdir(DATA_PATH)
-        except FileExistsError as error:
-            if os.path.isdir(DATA_PATH):
-                pass
-            else:
-                print('Unexpected FileExistsError while creating data directory:', error)
-        except OSError as error:
-            print('Unexpected OSError while creating data directory:', error)
-
-        # Get current USD to AUD conversion value
-        url = 'https://www.freeforexapi.com/api/live?pairs=USDAUD'
-        self.fatController.usdToAudConversion = float(requests.get(url=url).json()['rates']['USDAUD']['rate'])
 
         numberOfStocks = len(self.portfolio)
         for count, investment in enumerate(self.portfolio):
@@ -67,28 +55,111 @@ class DownloadThread(threading.Thread):
         self.downloadingWindow.hide()
 
     def getShare(self, today, investment):
-        url = 'https://eodhistoricaldata.com/api/eod/' + \
-              investment.code + \
-              '.AU?api_token=' + \
-              self.fatController.key + \
-              '&fmt=json' + \
-              '&from={}-{}-{}'.format(today.year - 1, today.month, today.strftime("%d")) + \
-              '&to={}-{}-{}'.format(today.year, today.month, today.strftime("%d")) + \
-              '&g=m'
-        response = requests.get(url=url).json()
-        with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
-            json.dump(response, outfile)
 
-        # Update current priceHistory
-        url = 'https://eodhistoricaldata.com/api/real-time/' + \
-              investment.code + \
-              '.AU?api_token=' + \
-              self.fatController.key + \
-              '&fmt=json'
-        response = requests.get(url=url).json()
-        investment.currentPrice = float(response['close'])
+        if self.fatController.dataSupplier == 'EOD':
+            self.useEodHistoricData(today, investment)
+        elif self.fatController.dataSupplier == 'tiingo':
+            self.useTiingo(today, investment)
+        elif self.fatController.dataSupplier == 'MarketStack':
+            self.useMarketStack(today, investment)
+
+    def useMarketStack(self, today, investment):
+
+        try:
+            # http:// api.marketstack.com / v1 / eod?access_key = 99
+            #  & symbols = MP1.xasx & limit = 1
+            url = 'http://api.marketstack.com/v1/' + \
+                  'eod/latest?' + \
+                  'access_key=' + \
+                  self.fatController.key + \
+                  '&symbols=' + \
+                  # investment.code + \
+                  # '.' + \
+                  # self.fatController.exchange
+                  # self.fatController.exchange + \
+                  # '&date_from=' + \
+                  # '2021-6-29' + \
+                  # '&date_to=' + \
+                  # '2021-7-6'
+                  # '{}-{}-{}'.format(today.year, today.month-1, today.strftime("%d")) + \
+                  # '&date_to=' + \
+                  # '{}-{}-{}'.format(today.year, today.month, today.strftime("%d"))
+                # '&limit=100'
+            print(url)
+            response = requests.get(url=url).json()
+
+            with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
+                json.dump(response, outfile)
+
+        except JSONDecodeError as e:
+            self.fatController.showDialog("There was a problem getting data.\n"
+                                          "Is your MarketStack API key valid?\n"
+                                          "Error: " + str(e))
+            return
+
+    # noinspection PyMethodMayBeStatic
+    def useTiingo(self, today, investment):
+
+        ws = websocket.create_connection("wss://api.tiingo.com/test")
+
+        subscribe = {
+            'eventName': 'subscribe',
+            'eventData': {
+                'authToken': 'a9ff0068d4215177bb02ba8b54eb894ae4ce45f7'
+            }
+        }
+
+        ws.send(json.dumps(subscribe))
+        while True:
+            print(ws.recv(), today, investment)
+            return ws.recv()
+
+    def useEodHistoricData(self, today, investment):
+
+        try:
+            url = 'https://eodhistoricaldata.com/api/eod/' + \
+                  investment.code + \
+                  '.AU?api_token=' + \
+                  self.fatController.key + \
+                  '&fmt=json' + \
+                  '&from={}-{}-{}'.format(today.year - 1, today.month, today.strftime("%d")) + \
+                  '&to={}-{}-{}'.format(today.year, today.month, today.strftime("%d")) + \
+                  '&g=m'
+            response = requests.get(url=url).json()
+            with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
+                json.dump(response, outfile)
+
+            # Update current priceHistory
+            url = 'https://eodhistoricaldata.com/api/real-time/' + \
+                  investment.code + \
+                  '.AU?api_token=' + \
+                  self.fatController.key + \
+                  '&fmt=json'
+            response = requests.get(url=url).json()
+            investment.currentPrice = float(response['close'])
+        except JSONDecodeError as e:
+            self.fatController.showDialog("There was a problem getting the currency conversion.\n"
+                                          "Is your EOD Historical Data API key valid?\n"
+                                          "Error: " + str(e))
+            return
 
     def getCrypto(self, today, investment):
+
+        # Get current currency conversion value
+        url = 'https://eodhistoricaldata.com/api/real-time/' + \
+              self.fatController.currency + \
+              '.FOREX?api_token=' + \
+              self.fatController.key + \
+              '&fmt=json'
+        try:
+            self.fatController.currencyConversion = float(requests.get(url=url).json()['close'])
+            self.fatController.model.writeCurrencyConversionValue()
+        except JSONDecodeError as e:
+            self.fatController.showDialog("There was a problem getting the currency conversion.\n"
+                                          "Is your EOD Historical Data API key valid?\n"
+                                          "Error: " + str(e))
+            self.fatController.currencyConversion = 1
+
         url = 'https://eodhistoricaldata.com/api/eod/' + \
               investment.code + \
               '-USD.CC?api_token=' + \
@@ -100,7 +171,7 @@ class DownloadThread(threading.Thread):
               '&g=m'
 
         response = requests.get(url=url).json()
-        with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
+        with open(os.path.join(self.fatController.model.DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
             json.dump(response, outfile)
 
         # Update current priceHistory
@@ -110,13 +181,13 @@ class DownloadThread(threading.Thread):
               self.fatController.key + \
               '&fmt=json'
         response = requests.get(url=url).json()
-        investment.conversion = self.fatController.usdToAudConversion
+        investment.conversion = self.fatController.currencyConversion
         investment.currentPrice = float(response['close']) * investment.conversion if response['close'] != 'NA' \
             else investment.priceHistory['close'][-1]
 
     def getCoinSpot(self):
-        api_key = '7a95f252'
-        api_secret = '08TV3MDJUQN7JDM5L8PQHUUTCCZHTFRMBACL2L'
+        api_key = 'key'
+        api_secret = 'secret'
 
         client = Coinspot(api_key, api_secret)
         print(client.balances())

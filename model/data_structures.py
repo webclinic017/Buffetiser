@@ -18,6 +18,7 @@ class Investment:
         self.held = 0
         self.currentPrice = -1
         self.conversion = conversion
+        self.conversion = 1
         self.priceHistory = {}
         self.getTickerData(code)
 
@@ -27,6 +28,7 @@ class Investment:
         self.currentPrice = self.priceHistory['close'][-1] * self.conversion
 
     def livePrice(self):
+        print('---------------------', self.code, self.currentPrice * self.conversion)
         return self.currentPrice * self.conversion
 
     def totalCost(self):

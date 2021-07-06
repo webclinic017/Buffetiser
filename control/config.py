@@ -1,4 +1,7 @@
 # Colours
+import os
+from pathlib import Path
+
 import pygal.style
 
 RED = 'red'
@@ -28,3 +31,6 @@ Blue: pygal.style.BlueStyle
 '''
 INVESTMENT_PLOT_STYLE = pygal.style.DarkStyle
 TOTALS_PLOT_STYLE = pygal.style.DarkStyle
+
+# This is where the data directory will be located. Should be in user's home.
+DATA_PATH = str(os.path.join(Path.home(), 'buffetiser'))

@@ -12,7 +12,6 @@ from control.controller import FatController
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
-#     w = TestWindow()
     controller = FatController()
 
     sys.exit(app.exec_())
