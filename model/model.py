@@ -1,6 +1,5 @@
 import csv
 import os
-import pandas as pd
 import requests
 
 from model.data_structures import InvestmentType, Share, Crypto
@@ -69,7 +68,6 @@ class Model:
                 elif row[0] == 'currencyConversionKey':
                     self.fatController.currencyConversionKey = row[1]
                 elif row[0] == 'share':
-                    print(row)
                     self.portfolio.append(Share(InvestmentType.Share,
                                                 self.fatController.currencyConversion,
                                                 row[1],

@@ -5,9 +5,8 @@ import pygal
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGridLayout, QLabel
-from pygal.style import DarkStyle, NeonStyle
 
-from control.config import COLOUR0, COLOUR3, COLOUR1, RED, GREEN, INVESTMENT_PLOT_STYLE
+from control.config import COLOUR0, COLOUR3, RED, GREEN, INVESTMENT_PLOT_STYLE
 from model.data_structures import Crypto
 
 

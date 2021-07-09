@@ -3,9 +3,7 @@ import threading
 import os
 from datetime import datetime
 from json.decoder import JSONDecodeError
-
-import websocket
-import simplejson as json
+# import websocket
 
 import requests
 from PySide2.QtCore import QObject, Signal, Qt
@@ -55,16 +53,67 @@ class DownloadThread(threading.Thread):
         self.downloadingWindow.hide()
 
     def getShare(self, today, investment):
-
+        """
+        * FinnHub is > $50/month
+        * Barchart is on-demand priced
+        * EOD Historical Data $19/month
+        * AlphaVantage $50/month   U45IF5IZFLOFNP82
+        * IEX Cloud API no ASX
+        * Intrinio consultation
+        * Quandl no ASX
+        * Polygon no ASX
+        * Alpaca no ASX
+        * Tradier no ASX
+        * TwelveData $29/month
+        :param today:
+        :param investment:
+        :return:
+        """
         if self.fatController.dataSupplier == 'EOD':
             self.useEodHistoricData(today, investment)
         elif self.fatController.dataSupplier == 'tiingo':
             self.useTiingo(today, investment)
         elif self.fatController.dataSupplier == 'MarketStack':
             self.useMarketStack(today, investment)
+        elif self.fatController.dataSupplier == 'xignite':
+            self.useXignite(today, investment)
+        elif self.fatController.dataSupplier == 'AlphaVantage':
+            self.useAlphaVantage(today, investment)
+
+    def useAlphaVantage(self, today, investment):
+        # url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=U45IF5IZFLOFNP82'
+        url = 'https://au.finance.yahoo.com/quote/CBA.AX'
+        response = requests.get(url=url).json()
+
+        print('useAlphaVantage', response)
+
+    def useXignite(self, today, investment):
+        # header = xsd.Element(
+        #     '{http://www.xignite.com/services/}Header',
+        #     xsd.ComplexType([
+        #         xsd.Element(
+        #             '{http://www.xignite.com/services/}Username',
+        #             xsd.String()
+        #         )
+        #     ])
+        # )
+        #
+        # header_value = header(Username='6GPq4V5EyOPnMSUtTZMNVmUQIUjA')
+        #
+        # parameters = {
+        #     'StartSymbol': 'AA',
+        #     'EndSymbol': 'AAF'
+        # }
+        #
+        # client = Client('http://navs.xignite.com/v2/xNAVs.asmx?WSDL')
+        # result = client.service.ListSymbols(**parameters, _soapheaders=[header_value])
+
+        # A real application should include some error handling. This example just prints the response.
+        # print('-------------------', result)
+        pass
 
     def useMarketStack(self, today, investment):
-
+        """US Only"""
         try:
             # http:// api.marketstack.com / v1 / eod?access_key = 99
             #  & symbols = MP1.xasx & limit = 1
@@ -73,19 +122,17 @@ class DownloadThread(threading.Thread):
                   'access_key=' + \
                   self.fatController.key + \
                   '&symbols=' + \
-                  # investment.code + \
-                  # '.' + \
-                  # self.fatController.exchange
-                  # self.fatController.exchange + \
-                  # '&date_from=' + \
-                  # '2021-6-29' + \
-                  # '&date_to=' + \
-                  # '2021-7-6'
-                  # '{}-{}-{}'.format(today.year, today.month-1, today.strftime("%d")) + \
-                  # '&date_to=' + \
-                  # '{}-{}-{}'.format(today.year, today.month, today.strftime("%d"))
-                # '&limit=100'
-            print(url)
+                  investment.code + \
+                  '.' + \
+                  self.fatController.exchange + \
+                  '&date_from=' + \
+                  '2021-6-29' + \
+                  '&date_to=' + \
+                  '{}-{}-{}'.format(today.year, today.month-1, today.strftime("%d")) + \
+                  '&date_to=' + \
+                  '{}-{}-{}'.format(today.year, today.month, today.strftime("%d")) + \
+                  '&limit=100'
+
             response = requests.get(url=url).json()
 
             with open(os.path.join(DATA_PATH, f'data-{investment.code}.txt'), 'w') as outfile:
@@ -99,20 +146,21 @@ class DownloadThread(threading.Thread):
 
     # noinspection PyMethodMayBeStatic
     def useTiingo(self, today, investment):
-
-        ws = websocket.create_connection("wss://api.tiingo.com/test")
-
-        subscribe = {
-            'eventName': 'subscribe',
-            'eventData': {
-                'authToken': 'a9ff0068d4215177bb02ba8b54eb894ae4ce45f7'
-            }
-        }
-
-        ws.send(json.dumps(subscribe))
-        while True:
-            print(ws.recv(), today, investment)
-            return ws.recv()
+        """US Only"""
+        pass
+        # ws = websocket.create_connection("wss://api.tiingo.com/test")
+        #
+        # subscribe = {
+        #     'eventName': 'subscribe',
+        #     'eventData': {
+        #         'authToken': 'a9ff0068d4215177bb02ba8b54eb894ae4ce45f7'
+        #     }
+        # }
+        #
+        # ws.send(json.dumps(subscribe))
+        # while True:
+        #     print(ws.recv(), today, investment)
+        #     return ws.recv()
 
     def useEodHistoricData(self, today, investment):
 

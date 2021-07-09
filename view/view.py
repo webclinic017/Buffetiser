@@ -5,7 +5,6 @@ import pygal
 from PySide2.QtCore import Qt, QUrl
 from PySide2.QtGui import QPixmap, QDesktopServices
 from PySide2.QtWidgets import QGridLayout, QLabel, QVBoxLayout
-from pygal.style import NeonStyle
 
 from control.config import COLOUR3, RED, GREEN, TOTALS_PLOT_STYLE
 from view.config_dialog import ConfigDialog
