@@ -2,7 +2,8 @@ import os
 import tempfile
 
 import pygal
-from PySide2.QtCore import Qt
+from PySide2 import QtWebEngineWidgets
+from PySide2.QtCore import Qt, QUrl
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGridLayout, QLabel
 
@@ -19,7 +20,7 @@ class InvestmentPanel(QWidget):
         self.currentValueLabel = QLabel()
         self.profitLabel = QLabel()
         self.percentProfitLabel = QLabel()
-        self.priceHistoryPlot = QLabel()
+        self.priceHistoryPlot = QtWebEngineWidgets.QWebEngineView()
 
         self.detailsLayout = QGridLayout()
 
@@ -140,15 +141,17 @@ class InvestmentPanel(QWidget):
 
     def plotPriceHistory(self):
 
-        self.investment.priceHistory
+        self.priceHistoryPlot.setFixedSize(1000, 300)
 
         investmentPlot = pygal.Line(width=1000,
                                     height=300,
-                                    show_dots=False,
-                                    show_y_guides=False,
+                                    dots_size=0.5,
                                     max_scale=6,
                                     legend_box_size=5,
+                                    show_y_guides=False,
+                                    human_readable=True,
                                     x_label_rotation=6.25,
+                                    tooltip_border_radius=10,
                                     show_minor_x_labels=False,
                                     style=INVESTMENT_PLOT_STYLE)
         investmentPlot.title = '{} ({})'.format(self.investment.name, self.investment.code)
@@ -159,9 +162,8 @@ class InvestmentPanel(QWidget):
         investmentPlot.add('Low', [float(x['low']) for x in self.investment.priceHistory])
         investmentPlot.add('High', [float(x['high']) for x in self.investment.priceHistory])
         investmentPlot.add('Close', [float(x['close']) for x in self.investment.priceHistory])
-        path = os.path.join(tempfile.gettempdir(), 'buffetiser.png')
-        investmentPlot.render_to_png(path)
-
+        path = os.path.join(tempfile.gettempdir(), 'buffetiser.svg')
+        investmentPlot.render_to_file(path)
         return path
 
     def livePrice(self):
@@ -217,5 +219,6 @@ class InvestmentPanel(QWidget):
 
     def updatePriceHistoryPlot(self):
         path = self.plotPriceHistory()
-        self.priceHistoryPlot.setPixmap(QPixmap(path))
-        os.remove(path)
+        self.priceHistoryPlot.load(QUrl.fromLocalFile(path))
+        # self.priceHistoryPlot.setPixmap(QPixmap(path))
+        # os.remove(path)
