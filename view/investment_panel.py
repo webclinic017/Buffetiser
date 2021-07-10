@@ -10,9 +10,9 @@ from control.config import COLOUR0, COLOUR3, RED, GREEN, INVESTMENT_PLOT_STYLE
 from model.data_structures import Crypto
 
 
-class investmentPanel(QWidget):
+class InvestmentPanel(QWidget):
     def __init__(self, investment):
-        super(investmentPanel, self).__init__()
+        super(InvestmentPanel, self).__init__()
 
         self.investment = investment
         self.livePriceLabel = QLabel()
@@ -140,7 +140,7 @@ class investmentPanel(QWidget):
 
     def plotPriceHistory(self):
 
-        self.investment.getTickerData(self.investment.code)
+        self.investment.priceHistory
 
         investmentPlot = pygal.Line(width=1000,
                                     height=300,
@@ -153,12 +153,12 @@ class investmentPanel(QWidget):
                                     style=INVESTMENT_PLOT_STYLE)
         investmentPlot.title = '{} ({})'.format(self.investment.name, self.investment.code)
 
-        dateList = [x for x in self.investment.priceHistory['date']]
+        dateList = [x['date'] for x in self.investment.priceHistory]
         investmentPlot.x_labels = dateList
         investmentPlot.x_labels_major = dateList[::48]
-        investmentPlot.add('Low', self.investment.priceHistory['low'])
-        investmentPlot.add('High', self.investment.priceHistory['high'])
-        investmentPlot.add('Close', self.investment.priceHistory['close'])
+        investmentPlot.add('Low', [float(x['low']) for x in self.investment.priceHistory])
+        investmentPlot.add('High', [float(x['high']) for x in self.investment.priceHistory])
+        investmentPlot.add('Close', [float(x['close']) for x in self.investment.priceHistory])
         path = os.path.join(tempfile.gettempdir(), 'buffetiser.png')
         investmentPlot.render_to_png(path)
 

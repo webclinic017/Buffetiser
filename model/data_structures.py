@@ -3,29 +3,36 @@ import json
 import os
 
 
+class Config:
+    def __init__(self):
+        self.dataSupplier = '-'
+        self.dataAccessKey = '-'
+        self.exchange = '-'
+        self.currency = '-'
+        self.currencyConversionKey = '-'
+        self.currencyConversion = '-'
+
+
 class InvestmentType(enum.Enum):
     Share = 1
     Crypto = 2
 
 
 class Investment:
-    def __init__(self, investmentType, conversion, code, name, costPerUnit, overallCost):
+    def __init__(self, investmentType, conversion, code, name, costPerUnit, overallCost, held):
         self.investmentType = investmentType
+        self.conversion = float(conversion)
         self.code = str(code)
         self.name = str(name)
         self.costPerUnit = float(costPerUnit) if costPerUnit else None
         self.overallCost = float(overallCost) if overallCost else None
-        self.held = 0
+        self.held = int(held)
         self.currentPrice = -1
-        self.conversion = conversion
-        self.conversion = 1
-        self.priceHistory = {}
-        self.getTickerData(code)
-
-        self.setDefaultLivePrice()
+        self.priceHistory = None
 
     def setDefaultLivePrice(self):
-        self.currentPrice = self.priceHistory['close'][-1] * self.conversion
+        if self.priceHistory:
+            self.currentPrice = float(self.priceHistory[-1]['close']) * self.conversion
 
     def livePrice(self):
         return self.currentPrice * self.conversion
@@ -42,40 +49,10 @@ class Investment:
     def percentProfit(self):
         return ((self.totalValue() / self.totalCost()) - 1) * 100
 
-    def getTickerData(self, code):
-        prices = {'date': [],
-                  'high': [],
-                  'low': [],
-                  'close': []}
-
-        if not os.path.isfile('data/data-{}.txt'.format(code)):
-            for x in range(0, 100):
-                prices['date'].append('-')
-                prices['high'].append(x)
-                prices['low'].append(x)
-                prices['close'].append(x)
-        else:
-            with open('data/data-{}.txt'.format(code)) as json_file:
-                response = json.load(json_file)
-
-            for entry in response:
-                if entry['date'] is None or \
-                   entry['high'] is None or \
-                   entry['low'] is None or \
-                   entry['close'] is None:
-                    continue
-                else:
-                    prices['date'].append(entry['date'])
-                    prices['high'].append(entry['high'] * self.conversion)
-                    prices['low'].append(entry['low'] * self.conversion)
-                    prices['close'].append(entry['close'] * self.conversion)
-
-        self.priceHistory = prices
-
 
 class Share(Investment):
     def __init__(self, investmentType, conversion, code, name, held, costPerUnit, overallCost):
-        super().__init__(investmentType, conversion, code, name, costPerUnit, overallCost)
+        super().__init__(investmentType, conversion, code, name, costPerUnit, overallCost, held)
         self.held = int(held)
 
 

@@ -9,7 +9,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, QVBoxLayout
 from control.config import COLOUR3, RED, GREEN, TOTALS_PLOT_STYLE
 from view.config_dialog import ConfigDialog
 from view.main_window import MainWindow
-from view.investment_panel import investmentPanel
+from view.investment_panel import InvestmentPanel
 
 
 class View:
@@ -45,7 +45,7 @@ class View:
 
     def createPanel(self, investment):
 
-        panel = investmentPanel(investment)
+        panel = InvestmentPanel(investment)
         self.allInvestmentPanels[investment.code] = panel
         self.topLayout.addWidget(panel, self.row, 0)
 
