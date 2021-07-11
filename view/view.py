@@ -2,6 +2,7 @@ import os
 import tempfile
 
 import pygal
+from PySide2 import QtWebEngineWidgets
 from PySide2.QtCore import Qt, QUrl
 from PySide2.QtGui import QPixmap, QDesktopServices
 from PySide2.QtWidgets import QGridLayout, QLabel, QVBoxLayout
@@ -16,10 +17,11 @@ class View:
     def __init__(self, fatController):
 
         self.fatController = fatController
-        self.portfolio = fatController.model.portfolio
         self.row = 0
         self.mainWindow = None
         self.allInvestmentPanels = {}
+
+        self.priceHistoryPlot = QtWebEngineWidgets.QWebEngineView()
 
         self.profitLabel = QLabel()
         self.percentProfitLabel = QLabel()
@@ -66,26 +68,26 @@ class View:
                                 style=TOTALS_PLOT_STYLE)
         totalsPlot.title = "Total Portfolio Value"
         totalsPlot.add('Sum', self.fatController.model.calculatePortfolioTotals())
-        path = os.path.join(tempfile.gettempdir(), 'buffetizer.png')
-        totalsPlot.render_to_png(path)
-        plotWidget = QLabel()
-        plotWidget.setPixmap(QPixmap(path))
-        os.remove(path)
+        path = os.path.join(tempfile.gettempdir(), 'buffetizer-totals.svg')
+        totalsPlot.render_to_file(path)
 
-        return plotWidget
+        return path
 
     def createTotalsPanel(self):
 
-        self.bottomLayout.addWidget(self.fatController.view.plotPortfolioValueHistory(), 0, 0, 4, 1)
+        path = self.plotPortfolioValueHistory()
+        self.priceHistoryPlot.load(QUrl.fromLocalFile(path))
+        self.bottomLayout.addWidget(self.priceHistoryPlot, 0, 0, 4, 1)
 
         totalCost = 0
         totalValue = 0
         totalPercentProfit = 0
-        for investment in self.portfolio:
+        a = self.fatController.model.portfolio
+        for investment in self.fatController.model.portfolio:
             totalCost += investment.totalCost()
             totalValue += investment.totalValue()
 
-        if len(self.portfolio) > 0:
+        if len(self.fatController.model.portfolio) > 0:
             totalPercentProfit = ((totalValue / totalCost) - 1) * 100
 
         label = QLabel('Cost:')

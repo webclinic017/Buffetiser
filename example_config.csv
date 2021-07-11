@@ -1,5 +1,19 @@
-key,<insert API key from https://eodhistoricaldata.com>
-share,VAS,Australian Shares,50,60.123
-share,VDHG,Diversified High-growth Australian,100,50.456
-share,VGS,International Shares,150,70.789
-share,VTS,US Total Market Shares,25,200.246
+"# Data Sources can be EOD, tiingo, MarketStack, xignite, AlphaVantage, scrape, BigCharts",,,,,
+dataSupplier,BigCharts,,,,
+dataAccessKey,,,,,
+currency,AUD,,,,
+currencyConversionKey,da52a4f4e127f7d7c51b87ab,,,,
+exchange,XASX,,,,
+currencyConversion,1.3387,,,,
+Investment Type,Symbol,Name,Amount Held,Cost Per Unit,Overall Cost
+share,VDHG,Diversified High-growth Australian,20,40,
+share,VAS,Australian Shares Index,20,70,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,

@@ -29,6 +29,7 @@ def useBigCharts(today, investment):
     :param investment: The Investment object to fetch data for.
     """
     shareHistory = investment.priceHistory
+    todayString = '{}-{}-{}'.format(today.year, today.month, today.strftime("%d"))
 
     url = 'https://bigcharts.marketwatch.com/quotes/multi.asp?view=q&msymb=' + \
           'au:{}+'.format(investment.code)
@@ -43,16 +44,20 @@ def useBigCharts(today, investment):
         volume = soup.find('td', {'class': 'volume-col'}).text
         investment.currentPrice = float(lastPrice)
 
-        currentPriceObject = {"date": '{}-{}-{}'.format(today.year, today.month, today.strftime("%d")),
+        currentPriceObject = {"date": todayString,
                               "open": float(low),
                               "high": float(high),
                               "low": float(low),
                               "close": float(lastPrice),
                               "adjusted_close": float(lastPrice),
                               "volume": int(volume.replace(',', ''))}
-        shareHistory.append(currentPriceObject)
 
-        writeInvestmentDataFile(investment.code, shareHistory)
+        # Don't want to add multiple entries for the same day.
+        if todayString in [entry['date'] for entry in shareHistory]:
+            return
+        else:
+            shareHistory.append(currentPriceObject)
+            writeInvestmentDataFile(investment.code, shareHistory)
 
 
 """----------------------- Yet to be implemented/used -----------------------"""

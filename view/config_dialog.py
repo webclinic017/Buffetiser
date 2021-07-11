@@ -28,17 +28,17 @@ class ConfigDialog(QDialog):
                                            padding-left: 10;}""")
         layout.addWidget(iconLabel, 0, 0, 6, 1)
 
-        dataLabel = QLabel('''Get a fully functional and free API Key from ''' +
+        dataLabel = QLabel('''Get a free or student discounted API Key from ''' +
                            '''<a style="color: ''' +
                            COLOUR3 +
-                           ''';" href='https://www.weblink.com.au'>WebLink</a>''')
+                           ''';" href='https://eodhistoricaldata.com'>EOD Historic Data</a>''')
         dataLabel.setStyleSheet("""QLabel{ padding-top: 20px;
                                            padding-left: 60;
                                            padding-bottom: 0px;
                                            margin: 0px;
                                            color: """ + COLOUR3 + """;}""")
         dataIconLabel = QLabel()
-        pixmap = QPixmap('media/weblink.png')
+        pixmap = QPixmap('media/eod.png')
         dataIconLabel.setPixmap(pixmap)
         dataIconLabel.setStyleSheet("""QLabel{padding-left: 60;}""")
         dataLabel.setOpenExternalLinks(True)

@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+import shutil
 from datetime import datetime
 
 import requests
@@ -14,15 +15,12 @@ def validateConfigFile():
     valid = True
     if not os.path.isfile(os.path.join(DATA_PATH, 'config.csv')):
         try:
-            with open(os.path.join(DATA_PATH, 'config.csv'), 'w') as file:
-                file.write('dataSupplier,BigCharts')
-                file.write('dataAccessKey,\n')
-                file.write('currency,AUD\n')
-                file.write('currencyConversionKey,\n')
-                file.write('exchange,XASX\n')
-                file.write('currencyConversion,1.3387\n')
-                file.write('Investment Type, Ticker Symbol, Company Name, Units Held, Cost Per Unit, Total Cost\n')
-                valid = False
+            # Config doesn't exist so copy example
+            s = r'{}/example_config.csv'.format(os.getcwd())
+            d = DATA_PATH+'/config.csv'
+            if not os.path.isdir(DATA_PATH):
+                os.mkdir(DATA_PATH+'/')
+            shutil.copyfile(s, d)
         except IOError as e:
             valid = False
         except FileExistsError as error:
@@ -169,6 +167,7 @@ def writeInvestmentDataFile(investmentCode, shareHistory):
         print('Nothing to write')
         return
 
+    # TODO: if date exists in history, update don't add
     for index in range(0, len(shareHistory)):
         shareDataJson = {'date': shareHistory[index]['date'],
                          'high': shareHistory[index]['high'],
@@ -184,6 +183,8 @@ def writeCurrencyConversionValue(currencyConversion):
     """
     Always need a valid currency conversion based on user's currency.
     """
+    validateConfigFile()
+
     configPath = os.path.join(DATA_PATH, 'config.csv')
     outputTempPath = os.path.join(DATA_PATH, 'config-o.csv')
     inFile = open(configPath, 'r')

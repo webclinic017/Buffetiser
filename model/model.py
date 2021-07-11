@@ -1,12 +1,5 @@
-import csv
-import os
-import requests
-
-from control.file_io_controller import validateConfigFile
 from control.network_controller import getCurrentCurrencyConversionRate
-from model.data_structures import InvestmentType, Share, Crypto
 from view.download_window import DownloadThread
-from control.config import DATA_PATH
 
 
 class Model:
@@ -25,16 +18,17 @@ class Model:
         """
         :return: Total sum of all investments for each day for the 100(ish) days.
         """
-        portfolioSum = []
-        for day in range(0, 255):
-            daySum = 0
-            for investment in self.portfolio:
-                try:
-                    daySum += float(investment.priceHistory[day]['close']) * investment.conversion
-                except IndexError:
-                    pass  # It doesn't matter
-            portfolioSum.append(daySum)
+        portfolioSum = {}
 
-        return portfolioSum
+        for investment in self.portfolio:
+            for entry in investment.priceHistory:
+                if entry['date'] in portfolioSum:
+                    portfolioSum[entry['date']] += float(entry['close'])
+                else:
+                    portfolioSum[entry['date']] = float(entry['close'])
+
+        # get rid of garbage at the end
+        return list(portfolioSum.values())[0:-3]
+
 
 
