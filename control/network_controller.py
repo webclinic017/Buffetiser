@@ -57,6 +57,7 @@ def useBigCharts(today, investment):
             return
         else:
             shareHistory.append(currentPriceObject)
+
             writeInvestmentDataFile(investment.code, shareHistory)
 
 

@@ -34,3 +34,7 @@ TOTALS_PLOT_STYLE = pygal.style.DarkStyle
 
 # This is where the data directory will be located. Should be in user's home.
 DATA_PATH = str(os.path.join(Path.home(), 'buffetiser'))
+
+SHOW_LOW = True
+SHOW_HIGH = True
+SHOW_CLOSE = True

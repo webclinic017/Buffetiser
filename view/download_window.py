@@ -77,6 +77,7 @@ class DownloadThread(threading.Thread):
             self.useAlphaVantage(today, investment)
         elif dataSupplier == 'BigCharts':
             useBigCharts(today, investment)
+            self.fatController.view.updateTotalsPanel()
         elif dataSupplier == 'scrape':
             self.scrapeAsx(today, investment)
 

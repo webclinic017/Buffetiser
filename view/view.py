@@ -73,6 +73,9 @@ class View:
 
         return path
 
+    def updateTotalsPanel(self):
+        pass
+
     def createTotalsPanel(self):
 
         path = self.plotPortfolioValueHistory()
@@ -82,7 +85,7 @@ class View:
         totalCost = 0
         totalValue = 0
         totalPercentProfit = 0
-        a = self.fatController.model.portfolio
+
         for investment in self.fatController.model.portfolio:
             totalCost += investment.totalCost()
             totalValue += investment.totalValue()
