@@ -4,9 +4,9 @@ from datetime import datetime
 from PySide2.QtCore import QObject, Signal, Qt
 from PySide2.QtGui import QPalette, QBrush, QColor
 
-from control.config import COLOUR0, COLOUR3, DATA_PATH
+from control.config import COLOUR0, COLOUR3
 from control.network_controller import useBigCharts
-from model.data_structures import InvestmentType
+from model_python.data_structures import InvestmentType
 from view.qroundprogressbar import QRoundProgressBar
 
 

@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from control.config import DATA_PATH
 from control.file_io_controller import writeInvestmentDataFile, writeCurrencyConversionValue
-from model.CoinSpot import Coinspot
+from model_python.CoinSpot import Coinspot
 
 
 def getCurrentCurrencyConversionRate():

@@ -7,7 +7,7 @@ from PySide2.QtCore import Qt, QUrl
 from PySide2.QtWidgets import QWidget, QGridLayout, QLabel
 
 from control.config import COLOUR0, COLOUR3, RED, GREEN, INVESTMENT_PLOT_STYLE
-from model.data_structures import Crypto
+from model_python.data_structures import Crypto
 
 
 class InvestmentPanel(QWidget):

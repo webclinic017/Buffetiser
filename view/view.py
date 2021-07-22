@@ -4,13 +4,13 @@ import tempfile
 import pygal
 from PySide2 import QtWebEngineWidgets
 from PySide2.QtCore import Qt, QUrl
-from PySide2.QtGui import QPixmap, QDesktopServices
 from PySide2.QtWidgets import QGridLayout, QLabel, QVBoxLayout
 
 from control.config import COLOUR3, RED, GREEN, TOTALS_PLOT_STYLE
+from view.help import Help
 from view.config_dialog import ConfigDialog
-from view.main_window import MainWindow
 from view.investment_panel import InvestmentPanel
+from view.main_window import MainWindow
 
 
 class View:
@@ -39,7 +39,8 @@ class View:
         self.allInvestmentPanels[investment.code].updateAll()
 
     def help(self, _):
-        QDesktopServices.openUrl(QUrl('file:help/index.html'))
+        heldDialog = Help(self.fatController)
+        heldDialog.show()
 
     def config(self, _):
         config = ConfigDialog(self.fatController)

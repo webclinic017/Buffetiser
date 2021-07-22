@@ -3,8 +3,9 @@ Created on 4 Jul. 2020
 
 @author: mullsy
 '''
-import sys
 import os
+import sys
+
 from PySide2.QtWidgets import QApplication
 
 from control.controller import FatController

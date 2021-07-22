@@ -29,10 +29,8 @@ from enum import Enum
 
 from PySide2.QtCore import Slot, QRectF, Qt, QPointF
 from PySide2.QtGui import QImage, QPainter, QPaintEvent, QPen, QPainterPath, QFontMetricsF, QFont, QRadialGradient, \
-    QGradient, QPalette, QConicalGradient, QBrush
+    QGradient, QPalette, QConicalGradient
 from PySide2.QtWidgets import QWidget
-
-from control.config import COLOUR1
 
 
 class QRoundProgressBar(QWidget):
