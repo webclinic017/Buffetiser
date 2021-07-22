@@ -24,8 +24,8 @@ GNU General Public License for more details.
 
 """
 
-import hmac
 import hashlib
+import hmac
 import http.client
 import json
 from time import time
