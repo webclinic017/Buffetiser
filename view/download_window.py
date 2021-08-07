@@ -6,7 +6,7 @@ from PySide2.QtGui import QPalette, QBrush, QColor
 
 from control.config import COLOUR0, COLOUR3
 from control.network_controller import useBigCharts
-from model_python.data_structures import InvestmentType
+from model.data_structures import InvestmentType
 from view.qroundprogressbar import QRoundProgressBar
 
 

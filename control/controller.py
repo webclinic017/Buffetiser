@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QWidget
 
 from control.file_io_controller import writeInvestmentDataFile, readConfigFile, readPortfolioData
-from model_python.model import Model
+from model.model import Model
 from view.view import View
 
 

@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from control.config import DATA_PATH
-from model_python.data_structures import Config, Share, InvestmentType, Crypto
+from model.data_structures import Config, Share, InvestmentType, Crypto
 
 
 def validateConfigFile():
